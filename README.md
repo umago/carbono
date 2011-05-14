@@ -19,7 +19,9 @@ Download and running
 --------------------
 
 1 - First you have to download the carbono livecd [here][2].
+
 2 - Burn the .iso file to a CD/DVD or Convert to pendrive using [unetbootin][5] or a similar tool.
+
 3 - Boot it.
 
 Testing
@@ -54,7 +56,7 @@ Contributing
 Please take a look at [TODO][3] file to see bugs and not-implemented-yet 
 features.
 
-[1]: http://github.com/umago/kabukiman/issues
+[1]: http://github.com/umago/carbono/issues
 [2]: http://umago.info/carbono
 [3]: https://github.com/umago/carbono/blob/master/TODO
 [4]: https://github.com/umago/carbono/blob/master/COPYING
