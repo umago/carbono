@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 from carbono.filesystem.generic import Generic
+from carbono.options import Options
 from carbono.filesystem.ext3 import Ext3
 from carbono.filesystem.ntfs import Ntfs
 from carbono.filesystem.linux_swap import LinuxSwap
@@ -30,14 +31,20 @@ class FilesystemManager:
 
     def _get_filesystem_instance(self):
         """  """
-        if self.type == "ext3":
-            fs_instance = Ext3(self.path, self.type, self.geometry)
-        elif self.type == "ntfs":
-            fs_instance = Ntfs(self.path, self.type, self.geometry)
-        elif self.type.startswith("linux-swap"):
-            fs_instance = LinuxSwap(self.path, self.type, self.geometry)
-        else:
+        options = Options()
+        if options.raw:
             fs_instance = Generic(self.path, self.type, self.geometry)
+            self.type = "generic"
+        else:    
+            if self.type == "ext3":
+                fs_instance = Ext3(self.path, self.type, self.geometry)
+            elif self.type == "ntfs":
+                fs_instance = Ntfs(self.path, self.type, self.geometry)
+            elif self.type.startswith("linux-swap"):
+                fs_instance = LinuxSwap(self.path, self.type, self.geometry)
+            else:
+                fs_instance = Generic(self.path, self.type, self.geometry)
+                self.type = "generic"
 
         return fs_instance
 

@@ -21,6 +21,7 @@ import sys
 
 from carbono.image_restorer import ImageRestorer
 from carbono.image_creator import ImageCreator
+from carbono.options import Options
 
 class Cli:
 
@@ -51,6 +52,11 @@ class Cli:
                                 "the level of compression; 1 is fastest and "
                                 "produces the least compression, 9 is slowest "
                                 "and produces the most. [default: %default]",)
+        create_group.add_option("-r", "--raw", 
+                                dest="raw", 
+                                action="store_true",
+                                default=False,
+                                help="Create raw images. [default: %default]",)
         restore_group.add_option("-t", "--target-device", 
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
@@ -61,24 +67,28 @@ class Cli:
 
     def run(self):
         """ """
-        options, remainder = self.parser.parse_args()
-        if options.source_device is not None:
-            if options.output_folder is None:
+        opt, remainder = self.parser.parse_args()
+        if opt.source_device is not None:
+            if opt.output_folder is None:
                 self.parser.print_help()
                 sys.exit(1)
 
-            ic = ImageCreator(options.image_name,
-                              options.source_device,
-                              options.output_folder,
-                              options.compressor_level)
+            options = Options()
+            options.set_options("image_name", opt.image_name)
+            options.set_options("source_device", opt.source_device)
+            options.set_options("output_folder", opt.output_folder)
+            options.set_options("compressor_level", opt.compressor_level)
+            options.set_options("raw", opt.raw)
+
+            ic = ImageCreator()
             ic.create_image()
 
-        elif options.target_device:
-            if options.image_folder is None:
+        elif opt.target_device:
+            if opt.image_folder is None:
                 self.parser.print_help()
                 sys.exit(1)
 
-            ir = ImageRestorer(options.image_folder, options.target_device)
+            ir = ImageRestorer(opt.image_folder, opt.target_device)
             ir.restore_image()
 
 if __name__ == '__main__':

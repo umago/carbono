@@ -29,7 +29,7 @@ class Generic(parted.FileSystem):
 
     def get_size(self):
         """ """
-        return long(self.getSize('b'))
+        return long(self.geometry.getSize('b'))
 
     def get_used_size(self):
         """ """

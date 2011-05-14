@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import math
+from os.path import realpath
 
 from carbono.device import Device
 from carbono.disk import Disk
@@ -24,20 +25,20 @@ from carbono.mbr import Mbr
 from carbono.compressor import Compressor
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
+from carbono.options import Options
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
 
 class ImageCreator:
 
-    def __init__(self, image_name,
-                       device_path,
-                       target_path,
-                       compressor_level):
-        self.image_name = image_name
-        self.device_path = device_path
-        self.target_path = adjust_path(target_path)
-        self.compressor_level = compressor_level
+    def __init__(self):
+
+        self.options = Options()
+        self.image_name = self.options.image_name
+        self.device_path = self.options.source_device
+        self.target_path = adjust_path(realpath(self.options.output_folder))
+        self.compressor_level = self.options.compressor_level
 
     def _print_informations(self, total_bytes):
         """ """
