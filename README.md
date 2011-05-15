@@ -6,32 +6,12 @@ and restore images of your complete hard disk or partition.
 Its also optimize the resulting image using tools to manipulate the 
 filesystem and compacting the data blocks.
 
-Requirements
-------------
-
-    * python
-    * python-parted
-    * ntfsprogs
-    * dump
-    * restore
-
-Download and running
---------------------
-
-1 - First you have to download the carbono livecd [here][2].
-
-2 - Burn the .iso file to a CD/DVD or Convert to pendrive using [unetbootin][5] or a similar tool.
-
-3 - Boot it.
-
 Testing
 -------
 
     WARNING: 
     DO NOT TEST CARBONO IN YOUR MAIN SYSTEM UNLESS YOU KNOW WHAT YOU ARE DOING.
     ITS HIGHLY RECOMMENDED USING VIRTUAL MACHINES WHEN TESTING CARBONO! NEVER FORGET IT!
-
-blah blah blah
 
 License
 -------

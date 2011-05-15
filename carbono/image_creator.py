@@ -16,7 +16,6 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import math
-from os.path import realpath
 
 from carbono.device import Device
 from carbono.disk import Disk
@@ -25,20 +24,19 @@ from carbono.mbr import Mbr
 from carbono.compressor import Compressor
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
-from carbono.options import Options
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
 
 class ImageCreator:
 
-    def __init__(self):
+    def __init__(self, source_device, output_folder, image_name="image", compressor_level=6, raw=False):
 
-        self.options = Options()
-        self.image_name = self.options.image_name
-        self.device_path = self.options.source_device
-        self.target_path = adjust_path(realpath(self.options.output_folder))
-        self.compressor_level = self.options.compressor_level
+        self.image_name = image_name
+        self.device_path = source_device
+        self.target_path = adjust_path(output_folder)
+        self.compressor_level = compressor_level
+        self.raw = raw
 
     def _print_informations(self, total_bytes):
         """ """
@@ -59,7 +57,7 @@ class ImageCreator:
             dlm = DiskLayoutManager(self.target_path)
             dlm.save_to_file(disk)
         
-        partition_list = disk.get_valid_partitions()
+        partition_list = disk.get_valid_partitions(self.raw)
         
         total_bytes = 0
         for p in partition_list:

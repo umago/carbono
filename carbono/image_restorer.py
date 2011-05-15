@@ -31,8 +31,8 @@ from carbono.config import *
 
 class ImageRestorer:
 
-    def __init__(self, image_path, target_device):
-        self.image_path = adjust_path(image_path)
+    def __init__(self, image_folder, target_device):
+        self.image_path = adjust_path(image_folder)
         self.target_device = target_device
 
     def _print_informations(self, total_bytes, image_name):

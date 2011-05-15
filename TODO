@@ -3,7 +3,7 @@
 * Btrfs support
 * Split files
 * GUI
-* Fazer uma checagem antes de iniciar o processo de criação (igual o gparted)
+* Check filesystems before start creating the image (when its not raw)
 * Multicast
-* Pegar as infos certas dos Ext*
-* LVM (?)
+* Improve Ext3 Class
+* GPT

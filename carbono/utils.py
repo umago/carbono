@@ -19,6 +19,8 @@ import subprocess
 import tempfile
 import multiprocessing
 
+from os.path import realpath
+
 def run_command(cmd):
     """  """
     p = subprocess.Popen(cmd, shell=True,
@@ -34,6 +36,7 @@ def make_temp_dir():
 
 def adjust_path(path):
     """ """
+    path = realpath(path)
     if not path[-1] == '/':
         path += '/'
     return path

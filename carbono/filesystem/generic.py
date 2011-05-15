@@ -15,16 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-import parted
+#import parted
 import subprocess
 from carbono.config import *
 from carbono.exception import *
 
-class Generic(parted.FileSystem):
+#class Generic(parted.FileSystem):
+class Generic:
 
     def __init__(self, path, type, geometry):
-        parted.FileSystem.__init__(self, type, geometry)
+        #parted.FileSystem.__init__(self, type, geometry)
         self.path = path
+        self.type = type
+        self.geometry = geometry
         self._fd = None
 
     def get_size(self):

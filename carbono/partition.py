@@ -24,8 +24,13 @@ class Partition(parted.Partition):
     def __init__(self, disk, fs, type, geometry, path, number):
         parted.Partition.__init__(self, disk, type, fs, geometry)
         self._number = number
+        if fs is None: # treat as generic
+            fs_type = "generic"
+        else:
+            fs_type = fs.type
+            
         self.filesystem = FilesystemManager(path,
-                                            fs.type,
+                                            fs_type,
                                             geometry)
 
     def get_number(self):

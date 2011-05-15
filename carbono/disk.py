@@ -41,8 +41,11 @@ class Disk(parted.Disk):
         """ """
         for p in self.partitions:
             if p.number == number:
-                fs = parted.FileSystem(fs_type, p.geometry)
-                p.fileSystem = fs
+                if fs_type == "generic":
+                    p.fileSystem = None
+                else:
+                    fs = parted.FileSystem(fs_type, p.geometry)
+                    p.fileSystem = fs
                 partition = self._instance_partition(p)
                 return partition
         return None
@@ -50,14 +53,16 @@ class Disk(parted.Disk):
     def get_partition_by_path(self, path, fs_type):
         """ """
         p = self.getPartitionByPath(path)
-        fs = parted.FileSystem(fs_type, p.geometry)
-        p.fileSystem = fs
+        if fs_type == "generic":
+            p.fileSystem = None
+        else:
+            fs = parted.FileSystem(fs_type, p.geometry)
+            p.fileSystem = fs
         partition = self._instance_partition(p)
         return partition
 
-    def get_valid_partitions(self):
+    def get_valid_partitions(self, force_generic=False):
         """Return a list of valid partitions"""
-
         plist = list()
         for p in self.partitions:
             if p.type == parted.PARTITION_SWAP or \
@@ -70,6 +75,9 @@ class Disk(parted.Disk):
             if not p.fileSystem or \
                p.fileSystem.type.find("swap") > -1:
                 continue
+
+            if force_generic:
+                p.fileSystem = None
 
             partition = self._instance_partition(p)
             plist.append(partition)

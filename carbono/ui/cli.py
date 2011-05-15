@@ -21,7 +21,6 @@ import sys
 
 from carbono.image_restorer import ImageRestorer
 from carbono.image_creator import ImageCreator
-from carbono.options import Options
 
 class Cli:
 
@@ -56,7 +55,7 @@ class Cli:
                                 dest="raw", 
                                 action="store_true",
                                 default=False,
-                                help="Create raw images. [default: %default]",)
+                                help="Create raw images.",)
         restore_group.add_option("-t", "--target-device", 
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
@@ -73,14 +72,7 @@ class Cli:
                 self.parser.print_help()
                 sys.exit(1)
 
-            options = Options()
-            options.set_options("image_name", opt.image_name)
-            options.set_options("source_device", opt.source_device)
-            options.set_options("output_folder", opt.output_folder)
-            options.set_options("compressor_level", opt.compressor_level)
-            options.set_options("raw", opt.raw)
-
-            ic = ImageCreator()
+            ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, opt.compressor_level, opt.raw)
             ic.create_image()
 
         elif opt.target_device:
