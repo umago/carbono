@@ -142,3 +142,9 @@ class Ext3(Generic):
         os.chdir('/')
         run_command("umount %s" % self._tmpfs)
         run_command("umount %s" % self.path)
+
+    def check(self):
+        ret = run_command("e2fsck -f -y -v %s" % self.path)
+        if ret in(0, 1, 2): # Success...
+            return True
+        return False

@@ -58,7 +58,13 @@ class ImageCreator:
             dlm.save_to_file(disk)
         
         partition_list = disk.get_valid_partitions(self.raw)
-        
+
+        # check partitions filesystem
+        for p in partition_list:
+            if not p.filesystem.check():
+                raise ErrorCreatingImage("(%s) Filesystem is not clean" % p.path)       
+
+        # get total size
         total_bytes = 0
         for p in partition_list:
             total_bytes += p.filesystem.get_used_size()

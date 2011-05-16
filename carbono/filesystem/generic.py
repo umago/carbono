@@ -15,16 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-#import parted
 import subprocess
 from carbono.config import *
 from carbono.exception import *
 
-#class Generic(parted.FileSystem):
 class Generic:
 
     def __init__(self, path, type, geometry):
-        #parted.FileSystem.__init__(self, type, geometry)
         self.path = path
         self.type = type
         self.geometry = geometry
@@ -40,7 +37,7 @@ class Generic:
 
     def open_to_read(self):
         """ """
-        cmd = "dd if=%s bs=%s" % (self.path, DD_BLOCK_SIZE)
+        cmd = "dd if=%s bs=%s" % (self.path, BLOCK_SIZE)
         try:
             self._fd = subprocess.Popen(cmd, shell=True,
                                         stdin=subprocess.PIPE,
@@ -51,7 +48,7 @@ class Generic:
 
     def open_to_write(self):
         """ """
-        cmd = "dd of=%s bs=%s" % (self.path, DD_BLOCK_SIZE)
+        cmd = "dd of=%s bs=%s" % (self.path, BLOCK_SIZE)
         try:
             self._fd = subprocess.Popen(cmd, shell=True,
                                         stdin=subprocess.PIPE,
@@ -95,3 +92,7 @@ class Generic:
     def is_swap(self):
         """  """
         return False
+
+    def check(self):
+        """ Check if filesystem is clean. """
+        return True

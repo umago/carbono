@@ -18,6 +18,7 @@
 import subprocess
 from carbono.filesystem.generic import Generic
 from carbono.exception import *
+from carbono.utils import *
 
 class Ntfs(Generic):
 
@@ -78,3 +79,6 @@ class Ntfs(Generic):
             raise ErrorGettingUsedSize
 
         return size
+
+    def check(self):
+        return not run_command("ntfsresize -P -i -f -v %s" % self.path)

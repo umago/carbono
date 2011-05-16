@@ -70,3 +70,7 @@ class FilesystemManager:
 
     def is_swap(self):
         return self._fs.is_swap()
+
+    def check(self):
+        return self._fs.check()
+        

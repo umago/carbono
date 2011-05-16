@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-DD_BLOCK_SIZE = "3M"
 FILE_PATTERN = "%s-%d.data"
-BLOCK_SIZE = 1024
+BLOCK_SIZE = 4096
 LOG_FILE = "/var/log/carbono.log"
