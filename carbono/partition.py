@@ -16,7 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import parted
-from carbono.filesystem_manager import FilesystemManager
+from carbono.filesystem import FilesystemFactory
 from carbono.utils import *
 
 class Partition(parted.Partition):
@@ -29,7 +29,7 @@ class Partition(parted.Partition):
         else:
             fs_type = fs.type
             
-        self.filesystem = FilesystemManager(path,
+        self.filesystem = FilesystemFactory(path,
                                             fs_type,
                                             geometry)
 

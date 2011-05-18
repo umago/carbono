@@ -22,9 +22,9 @@ from carbono.device import Device
 from carbono.disk import Disk
 from carbono.progress import Progress
 from carbono.mbr import Mbr
-from carbono.compressor import Compressor
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
+from carbono.reader import ReaderFactory
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -49,8 +49,6 @@ class ImageRestorer:
         compressor_level = information.get_image_compressor_level()
         total_bytes = information.get_image_total_bytes()
         total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
-
-        compressor = Compressor(compressor_level)
 
         device = Device(self.target_device)
 
@@ -100,17 +98,14 @@ class ImageRestorer:
                 continue
 
             file_name = FILE_PATTERN % (image_name, p.number)
-            with open(self.image_path + file_name, 'rb') as f:
-                # TODO: Work with parallelism
-                while True: # Ugly
-                    header = f.read(compressor.get_header_size())
-                    if not len(header):
-                        break
-                    size = compressor.read_block_header(header)
-                    cdata = f.read(size)
-                    data = compressor.extract(cdata)
-                    partition.filesystem.write(data)
-                    progress.increment(1)
+            file_path = self.image_path + file_name
+
+            reader = ReaderFactory(file_path, compressor_level)
+
+            for data in reader:
+                partition.filesystem.write(data)
+                progress.increment(1)
+
             partition.filesystem.close()
 
         progress.stop()

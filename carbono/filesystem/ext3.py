@@ -145,6 +145,6 @@ class Ext3(Generic):
 
     def check(self):
         ret = run_command("e2fsck -f -y -v %s" % self.path)
-        if ret in(0, 1, 2): # Success...
+        if ret in(0, 1, 2, 256):
             return True
         return False

@@ -47,10 +47,11 @@ class Cli:
                                 dest="compressor_level",
                                 type="int",
                                 default=6,
-                                help="An integer from 1 to 9 controlling "
-                                "the level of compression; 1 is fastest and "
-                                "produces the least compression, 9 is slowest "
-                                "and produces the most. [default: %default]",)
+                                help="An integer from 0 to 9 controlling "
+                                "the level of compression; 0 for no compression, "
+                                "1 is fastest and produces the least compression, "
+                                "9 is slowest and produces the most. "
+                                "[default: %default]",)
         create_group.add_option("-r", "--raw", 
                                 dest="raw", 
                                 action="store_true",

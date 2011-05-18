@@ -21,9 +21,9 @@ from carbono.device import Device
 from carbono.disk import Disk
 from carbono.progress import Progress
 from carbono.mbr import Mbr
-from carbono.compressor import Compressor
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
+from carbono.writer import WriterFactory
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -78,7 +78,6 @@ class ImageCreator:
         information.set_image_total_bytes(total_bytes)
         information.set_image_compressor_level(self.compressor_level)
 
-        compressor = Compressor(self.compressor_level)
         progress = Progress(total_blocks)
         progress.start()
         for p in partition_list:
@@ -90,15 +89,19 @@ class ImageCreator:
             p.filesystem.open_to_read()
 
             file_name = FILE_PATTERN % (self.image_name, number)
-            with open(self.target_path + file_name, 'wb') as f:
-                # TODO: Work with parallelism
-                while True: # Ugly
-                    data = p.filesystem.read(BLOCK_SIZE)
-                    if not len(data):
-                        break
-                    cdata = compressor.compact(data)
-                    f.write(cdata)
-                    progress.increment(1)
+            file_path = self.target_path + file_name
+
+            writer = WriterFactory(file_path, self.compressor_level)
+            writer.open()
+
+            while True: # Ugly
+                data = p.filesystem.read(BLOCK_SIZE)
+                if not len(data):
+                    break
+                writer.write(data)
+                progress.increment(1)
+
+            writer.close()
             p.filesystem.close()
 
         swap = disk.get_swap_partition()
