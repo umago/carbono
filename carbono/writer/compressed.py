@@ -28,3 +28,5 @@ class CompressedWriter(GenericWriter):
         if not self._check_fd():
             data = self.compressor.compact(data)
             self._fd.write(data)
+            return len(data)
+        return 0

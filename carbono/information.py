@@ -48,17 +48,19 @@ class Information:
         root = self._doc.getRootElement()
         root.setProp("is_disk", str(is_disk))
 
-    def add_partition(self, number, uuid, type):
+    def add_partition(self, number, uuid, type, volumes):
         """ """
         root = self._doc.getRootElement()
         partition = root.newChild(None, "partition", None)
 
         partition.setProp("number", str(number))
+        partition.setProp("type", type)
 
         if uuid is not None:
             partition.setProp("uuid", uuid)
+        if volumes > 1:
+            partition.setProp("volumes", str(volumes))
 
-        partition.setProp("type", type)
 
     def get_image_name(self):
         """ """
@@ -91,16 +93,21 @@ class Information:
         for p in root.xpathEval2("partition"):
             number = int(p.xpathEval2("@number")[0].content)
             type_ = p.xpathEval2("@type")[0].content
-            uuid = None
+
+            part_dict = dict()
+            part_dict.update({"number": number, "type": type_})
+
             if p.xpathEval2("@uuid"):
                 uuid = p.xpathEval2("@uuid")[0].content
+                part_dict.update({"uuid": uuid})
 
-            # Metaprogramming
+            if p.xpathEval2("@volumes"):
+                volumes = int(p.xpathEval2("@volumes")[0].content)
+                part_dict.update({"volumes": volumes})
+
             partition = type("Partition",
                              (object,),
-                             {"number": number,
-                              "type": type_,
-                              "uuid": uuid})
+                             part_dict)
             partitions.append(partition)
         return partitions
 

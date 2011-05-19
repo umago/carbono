@@ -35,4 +35,6 @@ class GenericWriter:
     def write(self, data):
         if not self._check_fd():
             self._fd.write(data)
+            return len(data)
+        return 0
         

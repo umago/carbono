@@ -75,37 +75,44 @@ class ImageRestorer:
         progress = Progress(total_blocks)
         progress.start()
         partitions = information.get_partitions()
-        for p in partitions:
+        for part in partitions:
             if information.get_image_is_disk():
-                partition = disk.get_partition_by_number(p.number, p.type)
+                partition = disk.get_partition_by_number(part.number, part.type)
             else:
                 parent_path = get_parent_path(self.target_device)
                 parent_device = Device(parent_path)
                 parent_disk = Disk(parent_device)
                 partition = parent_disk.get_partition_by_path(
                                             self.target_device,
-                                            p.type)
+                                            part.type)
 
             if partition is None:
                 raise ErrorRestoringImage("No valid partitions found")
 
-            if p.uuid is not None:
-                partition.filesystem.open_to_write(p.uuid)
+            if hasattr(part, "uuid"):
+                partition.filesystem.open_to_write(part.uuid)
             else:
                 partition.filesystem.open_to_write()
 
             if partition.filesystem.is_swap():
                 continue
 
-            file_name = FILE_PATTERN % (image_name, p.number)
-            file_path = self.image_path + file_name
+            current_volume = 1
+            while True:
+                file_name = FILE_PATTERN % (image_name, part.number, current_volume)
+                file_path = self.image_path + file_name
 
-            reader = ReaderFactory(file_path, compressor_level)
+                reader = ReaderFactory(file_path, compressor_level)
 
-            for data in reader:
-                partition.filesystem.write(data)
-                progress.increment(1)
+                for data in reader:
+                    partition.filesystem.write(data)
+                    progress.increment(1)
 
+                if hasattr(part, "volumes"):
+                    if current_volume < part.volumes:
+                        current_volume += 1
+                        continue
+                break
             partition.filesystem.close()
 
         progress.stop()

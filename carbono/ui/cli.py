@@ -57,6 +57,12 @@ class Cli:
                                 action="store_true",
                                 default=False,
                                 help="Create raw images.",)
+        create_group.add_option("-p", "--split", 
+                                dest="split_size",
+                                type="int",
+                                default=0,
+                                help="Split the image file into smaller chunks "
+                                "of required size (in MB).",)
         restore_group.add_option("-t", "--target-device", 
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
@@ -73,7 +79,8 @@ class Cli:
                 self.parser.print_help()
                 sys.exit(1)
 
-            ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, opt.compressor_level, opt.raw)
+            ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, \
+                              opt.compressor_level, opt.raw, opt.split_size)
             ic.create_image()
 
         elif opt.target_device:

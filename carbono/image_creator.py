@@ -30,21 +30,26 @@ from carbono.config import *
 
 class ImageCreator:
 
-    def __init__(self, source_device, output_folder, image_name="image", compressor_level=6, raw=False):
+    def __init__(self, source_device, output_folder, image_name="image", \
+                 compressor_level=6, raw=False, split_size=0):
 
         self.image_name = image_name
         self.device_path = source_device
         self.target_path = adjust_path(output_folder)
         self.compressor_level = compressor_level
         self.raw = raw
+        self.split_size = split_size
 
     def _print_informations(self, total_bytes):
         """ """
         print "Total Bytes: %s" % total_bytes
         print "Name: %s" % self.image_name
-        print "Compressor Level: %s" % self.compressor_level
         print "Source Device: %s" % self.device_path
         print "Target Path: %s" % self.target_path
+        if self.compressor_level:
+            print "Compressor Level: %s" % self.compressor_level
+        if self.split_size:
+            print "Split Size: %d MB" % self.split_size
 
     def create_image(self):
         """ """
@@ -60,14 +65,15 @@ class ImageCreator:
         partition_list = disk.get_valid_partitions(self.raw)
 
         # check partitions filesystem
-        for p in partition_list:
-            if not p.filesystem.check():
-                raise ErrorCreatingImage("(%s) Filesystem is not clean" % p.path)       
+        if not self.raw:
+            for part in partition_list:
+                if not part.filesystem.check():
+                    raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)       
 
         # get total size
         total_bytes = 0
-        for p in partition_list:
-            total_bytes += p.filesystem.get_used_size()
+        for part in partition_list:
+            total_bytes += part.filesystem.get_used_size()
        
         total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
         self._print_informations(total_bytes)
@@ -80,36 +86,46 @@ class ImageCreator:
 
         progress = Progress(total_blocks)
         progress.start()
-        for p in partition_list:
-            number = p.get_number()
-            uuid = p.filesystem.uuid()
-            type = p.filesystem.type
-            information.add_partition(number, uuid, type)
+        for part in partition_list:
+            number = part.get_number()
+            uuid = part.filesystem.uuid()
+            type = part.filesystem.type
 
-            p.filesystem.open_to_read()
+            part.filesystem.open_to_read()
+            split_volume = 1
+            while True:
+                file_name = FILE_PATTERN % (self.image_name, number, split_volume)
+                file_path = self.target_path + file_name
 
-            file_name = FILE_PATTERN % (self.image_name, number)
-            file_path = self.target_path + file_name
+                writer = WriterFactory(file_path, self.compressor_level)
+                writer.open()
 
-            writer = WriterFactory(file_path, self.compressor_level)
-            writer.open()
+                next_partition = False
+                total_written = 0
+                while True:
+                    data = part.filesystem.read(BLOCK_SIZE)
+                    if not len(data):
+                        next_partition = True
+                        break
+                    bytes_written = writer.write(data)
+                    total_written += bytes_written
+                    progress.increment(1)
+                    if self.split_size:
+                        if (total_written + bytes_written) / 1024 / 1024 >= self.split_size:
+                            break
 
-            while True: # Ugly
-                data = p.filesystem.read(BLOCK_SIZE)
-                if not len(data):
-                    break
-                writer.write(data)
-                progress.increment(1)
-
-            writer.close()
-            p.filesystem.close()
+                writer.close()
+                if next_partition: break
+                split_volume += 1
+            part.filesystem.close()
+            information.add_partition(number, uuid, type, split_volume)
 
         swap = disk.get_swap_partition()
         if swap is not None:
             number = swap.get_number()
             uuid = swap.filesystem.uuid()
             type = swap.filesystem.type
-            information.add_partition(number, uuid, type)
+            information.add_partition(number, uuid, type, 0)
 
         information.save()
         progress.stop()

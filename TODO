@@ -3,7 +3,6 @@
 * Btrfs support
 * Split files
 * GUI
-* Check filesystems before start creating the image (when its not raw)
 * Multicast
 * Improve Ext3 Class
 * GPT
