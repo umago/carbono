@@ -24,6 +24,7 @@ from carbono.exception import *
 from carbono.utils import *
 
 class Ext3(Generic):
+    MOUNT_OPTIONS = "-t ext3"
 
     def __init__(self, path, type, geometry):
         Generic.__init__(self, path, type, geometry)
@@ -60,11 +61,7 @@ class Ext3(Generic):
 
     def get_used_size(self):
         """  """
-        # XXX: Not a good method :/~
-        tmpd = make_temp_dir()
-        ret = run_command("mount -t ext3 %s %s" % (self.path, tmpd))
-        if ret is not 0:
-            raise ErrorGettingUsedSize("Unable to mount %s" % self.path)
+        tmpd = self.mount()
 
         try:
             out = os.popen("df -k | grep %s" % tmpd).read()
@@ -72,8 +69,7 @@ class Ext3(Generic):
         except Exception:
             raise ErrorGettingUsedSize
 
-        run_command("umount %s" % tmpd)
-
+        self.umount(tmpd)
         return size
 
     def open_to_read(self):
@@ -95,11 +91,7 @@ class Ext3(Generic):
         if ret is not 0:
             raise ErrorOpenToWrite
 
-        tmpd = make_temp_dir()
-        ret = run_command("mount -t ext3 %s %s" % (self.path, tmpd))
-        if ret is not 0:
-            raise ErrorOpenToWrite("Unable to mount %s" % self.path)
-
+        tmpd = self.mount()
         if self._mount_tmpfs():
             os.chdir(tmpd)
             cmd = "restore -u -y -r -T %s -f -" % self._tmpfs
@@ -148,3 +140,4 @@ class Ext3(Generic):
         if ret in(0, 1, 2, 256):
             return True
         return False
+

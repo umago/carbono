@@ -21,6 +21,7 @@ from carbono.exception import *
 from carbono.utils import *
 
 class Ntfs(Generic):
+    MOUNT_OPTIONS = "-t ntfs"
 
     def open_to_read(self):
         """ """

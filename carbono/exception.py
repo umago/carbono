@@ -47,3 +47,7 @@ class ErrorCreatingImage(Exception):
 
 class InvalidCompressorLevel(Exception):
     pass
+
+class ErrorMountingFilesystem(Exception):
+    pass
+

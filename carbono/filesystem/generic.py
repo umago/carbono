@@ -18,8 +18,10 @@
 import subprocess
 from carbono.config import *
 from carbono.exception import *
+from carbono.utils import *
 
 class Generic:
+    MOUNT_OPTIONS = ""
 
     def __init__(self, path, type, geometry):
         self.path = path
@@ -96,3 +98,28 @@ class Generic:
     def check(self):
         """ Check if filesystem is clean. """
         return True
+
+    def mount(self):
+        tmpd = make_temp_dir()
+        ret = run_command("mount %s %s %s" % (self.MOUNT_OPTIONS, self.path, tmpd))
+        if ret is not 0:
+            raise ErrorMountingFilesystem
+        return tmpd
+
+    def umount(self, dir=None):
+        if dir is not None:
+            param = dir
+        else:
+            param = self.path
+        run_command("sync")
+        ret = run_command("umount %s" % param)
+        return ret
+
+    def fill_with_zeros(self):
+        tmpd = self.mount()
+        tmpfile = tmpd + '/' + random_string()
+        run_command("dd if=/dev/zero of=%s bs=%s" % (tmpfile, BLOCK_SIZE))
+        run_command("rm %s" % tmpfile)
+        self.umount(tmpd)
+        return 0
+        

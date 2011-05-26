@@ -57,6 +57,13 @@ class Cli:
                                 action="store_true",
                                 default=False,
                                 help="Create raw images.",)
+        create_group.add_option("-z", "--fill-with-zeros", 
+                                dest="fill_with_zeros", 
+                                action="store_true",
+                                default=False,
+                                help="Fill the filesystem with zeros. Because Raw image "
+                                "copies every block of the filesystem this will aid "
+                                "compression of the image (If compression is enabled).",)
         create_group.add_option("-p", "--split", 
                                 dest="split_size",
                                 type="int",
@@ -80,7 +87,7 @@ class Cli:
                 sys.exit(1)
 
             ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, \
-                              opt.compressor_level, opt.raw, opt.split_size)
+                              opt.compressor_level, opt.raw, opt.split_size, opt.fill_with_zeros)
             ic.create_image()
 
         elif opt.target_device:

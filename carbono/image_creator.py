@@ -31,7 +31,8 @@ from carbono.config import *
 class ImageCreator:
 
     def __init__(self, source_device, output_folder, image_name="image", \
-                 compressor_level=6, raw=False, split_size=0):
+                 compressor_level=6, raw=False, split_size=0, \
+                 fill_with_zeros=False):
 
         self.image_name = image_name
         self.device_path = source_device
@@ -39,6 +40,7 @@ class ImageCreator:
         self.compressor_level = compressor_level
         self.raw = raw
         self.split_size = split_size
+        self.fill_with_zeros = fill_with_zeros
 
     def _print_informations(self, total_bytes):
         """ """
@@ -69,6 +71,11 @@ class ImageCreator:
             for part in partition_list:
                 if not part.filesystem.check():
                     raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)       
+
+        # fill partitions with zeroes
+        if self.raw and self.fill_with_zeros:
+            for part in partition_list:
+                part.filesystem.fill_with_zeros()
 
         # get total size
         total_bytes = 0

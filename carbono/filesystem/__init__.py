@@ -74,3 +74,12 @@ class FilesystemFactory:
     def check(self):
         return self._fs.check()
         
+    def mount(self):
+        return self._fs.mount()
+
+    def umount(self, dir=None):
+        return self._fs.umount(dir)
+
+    def fill_with_zeros(self):
+        return self._fs.fill_with_zeros()
+

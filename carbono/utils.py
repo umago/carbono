@@ -18,6 +18,7 @@
 import subprocess
 import tempfile
 import multiprocessing
+import random
 
 from os.path import realpath
 
@@ -33,6 +34,9 @@ def run_command(cmd):
 def make_temp_dir():
     """ """
     return tempfile.mkdtemp()
+
+def random_string(length=5):
+    return ''.join([random.choice(tempfile._RandomNameSequence.characters) for i in range(length)])
 
 def adjust_path(path):
     """ """
