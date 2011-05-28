@@ -66,8 +66,7 @@ class Cli:
                                 "compression of the image (If compression is enabled).",)
         create_group.add_option("-p", "--split", 
                                 dest="split_size",
-                                type="int",
-                                default=0,
+                                type="string",
                                 help="Split the image file into smaller chunks "
                                 "of required size (in MB).",)
         restore_group.add_option("-t", "--target-device", 
@@ -86,8 +85,22 @@ class Cli:
                 self.parser.print_help()
                 sys.exit(1)
 
+            split_size = 0
+            if opt.split_size:
+                l = opt.split_size[-1]
+                if l.isdigit():
+                    split_size = int(opt.split_size)
+                else:
+                    l = l.upper()
+                    if l == 'M':
+                        split_size = int(opt.split_size[:-1]) * 1024 * 1024
+                    elif l == 'G':
+                        split_size = int(opt.split_size[:-1]) * 1024 * 1024 * 1024
+                    else:
+                        raise Exception("Cannt determine split size")
+
             ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, \
-                              opt.compressor_level, opt.raw, opt.split_size, opt.fill_with_zeros)
+                              opt.compressor_level, opt.raw, split_size, opt.fill_with_zeros)
             ic.create_image()
 
         elif opt.target_device:

@@ -118,7 +118,7 @@ class ImageCreator:
                     total_written += bytes_written
                     progress.increment(1)
                     if self.split_size:
-                        if (total_written + bytes_written) / 1024 / 1024 >= self.split_size:
+                        if (total_written + bytes_written) >= self.split_size:
                             break
 
                 writer.close()
