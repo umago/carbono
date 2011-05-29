@@ -77,6 +77,19 @@ class Cli:
         self.parser.add_option_group(create_group)
         self.parser.add_option_group(restore_group)
 
+    def status(self, action, dict={}):
+        """ """
+        if action == "progress":
+            sys.stdout.write("%d%%\r" % dict["percent"])
+        elif action == "finish":
+            sys.stdout.write("finished.\n")
+        elif action == "checking_filesystem":
+            sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
+        elif action == "filling_with_zeros":
+            sys.stdout.write("Zeroing filesystem of %s...\n" % dict["device"])
+
+        sys.stdout.flush()
+
     def run(self):
         """ """
         opt, remainder = self.parser.parse_args()
@@ -99,8 +112,10 @@ class Cli:
                     else:
                         raise Exception("Cannt determine split size")
 
-            ic = ImageCreator(opt.source_device, opt.output_folder, opt.image_name, \
-                              opt.compressor_level, opt.raw, split_size, opt.fill_with_zeros)
+            ic = ImageCreator(opt.source_device, opt.output_folder, \
+                              opt.image_name, opt.compressor_level, \
+                              opt.raw, split_size, opt.fill_with_zeros)
+            ic.connect_status_callback(self.status)
             ic.create_image()
 
         elif opt.target_device:
@@ -109,6 +124,7 @@ class Cli:
                 sys.exit(1)
 
             ir = ImageRestorer(opt.image_folder, opt.target_device)
+            ir.connect_status_callback(self.status)
             ir.restore_image()
 
 if __name__ == '__main__':

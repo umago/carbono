@@ -20,7 +20,6 @@ import _ped
 
 from carbono.device import Device
 from carbono.disk import Disk
-from carbono.progress import Progress
 from carbono.mbr import Mbr
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
@@ -35,11 +34,14 @@ class ImageRestorer:
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
 
-    def _print_informations(self, total_bytes, image_name):
+    def connect_status_callback(self, callback):
         """ """
-        print "Total Bytes: %s" % total_bytes
-        print "Name: %s" % image_name
-        print "Target Device: %s" % self.target_device
+        self.status_callback = callback
+
+    def notify_status(self, action, dict={}):
+        """Notify interfaces about the current progress"""
+        if hasattr(self, "status_callback"):
+            self.status_callback(action, dict) 
 
     def restore_image(self):
         """ """
@@ -71,9 +73,6 @@ class ImageRestorer:
             dlm = DiskLayoutManager(self.image_path)
             dlm.restore_from_file(disk)
 
-        self._print_informations(total_bytes, image_name)
-        progress = Progress(total_blocks)
-        progress.start()
         partitions = information.get_partitions()
         for part in partitions:
             if information.get_image_is_disk():
@@ -97,6 +96,9 @@ class ImageRestorer:
             if partition.filesystem.is_swap():
                 continue
 
+            processed_blocks = 0
+            current_percent = -1
+
             current_volume = 1
             while True:
                 file_name = FILE_PATTERN % (image_name, part.number, current_volume)
@@ -106,14 +108,19 @@ class ImageRestorer:
 
                 for data in reader:
                     partition.filesystem.write(data)
-                    progress.increment(1)
+
+                    processed_blocks += 1
+                    percent = (processed_blocks/float(total_blocks)) * 100
+                    if current_percent != percent:
+                        current_percent = percent
+                        self.notify_status("progress", {"percent": current_percent})
 
                 if hasattr(part, "volumes"):
                     if current_volume < part.volumes:
                         current_volume += 1
                         continue
                 break
+
             partition.filesystem.close()
 
-        progress.stop()
-        print "completed."
+        self.notify_status("finish")

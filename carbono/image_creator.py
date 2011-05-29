@@ -19,7 +19,6 @@ import math
 
 from carbono.device import Device
 from carbono.disk import Disk
-from carbono.progress import Progress
 from carbono.mbr import Mbr
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
@@ -30,9 +29,9 @@ from carbono.config import *
 
 class ImageCreator:
 
-    def __init__(self, source_device, output_folder, image_name="image", \
-                 compressor_level=6, raw=False, split_size=0, \
-                 fill_with_zeros=False):
+    def __init__(self, source_device, output_folder, \
+                 image_name="image", compressor_level=6, raw=False, \
+                 split_size=0, fill_with_zeros=False):
 
         self.image_name = image_name
         self.device_path = source_device
@@ -42,16 +41,14 @@ class ImageCreator:
         self.split_size = split_size
         self.fill_with_zeros = fill_with_zeros
 
-    def _print_informations(self, total_bytes):
+    def connect_status_callback(self, callback):
         """ """
-        print "Total Bytes: %s" % total_bytes
-        print "Name: %s" % self.image_name
-        print "Source Device: %s" % self.device_path
-        print "Target Path: %s" % self.target_path
-        if self.compressor_level:
-            print "Compressor Level: %s" % self.compressor_level
-        if self.split_size:
-            print "Split Size: %d MB" % self.split_size
+        self.status_callback = callback
+
+    def notify_status(self, action, dict={}):
+        """Notify interfaces about the current progress"""
+        if hasattr(self, "status_callback"):
+            self.status_callback(action, dict) 
 
     def create_image(self):
         """ """
@@ -69,12 +66,14 @@ class ImageCreator:
         # check partitions filesystem
         if not self.raw:
             for part in partition_list:
+                self.notify_status("checking_filesystem", {"device": part.path})
                 if not part.filesystem.check():
                     raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)       
 
         # fill partitions with zeroes
         if self.raw and self.fill_with_zeros:
             for part in partition_list:
+                self.notify_status("filling_with_zeros", {"device": part.path})
                 part.filesystem.fill_with_zeros()
 
         # get total size
@@ -83,7 +82,6 @@ class ImageCreator:
             total_bytes += part.filesystem.get_used_size()
        
         total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
-        self._print_informations(total_bytes)
 
         information = Information(self.target_path)
         information.set_image_is_disk(device.is_disk())
@@ -91,8 +89,9 @@ class ImageCreator:
         information.set_image_total_bytes(total_bytes)
         information.set_image_compressor_level(self.compressor_level)
 
-        progress = Progress(total_blocks)
-        progress.start()
+        processed_blocks = 0 # Used to calc the percent
+        current_percent = -1
+
         for part in partition_list:
             number = part.get_number()
             uuid = part.filesystem.uuid()
@@ -116,7 +115,13 @@ class ImageCreator:
                         break
                     bytes_written = writer.write(data)
                     total_written += bytes_written
-                    progress.increment(1)
+
+                    processed_blocks += 1
+                    percent = (processed_blocks/float(total_blocks)) * 100
+                    if current_percent != percent:
+                        current_percent = percent
+                        self.notify_status("progress", {"percent": current_percent})
+
                     if self.split_size:
                         if (total_written + bytes_written) >= self.split_size:
                             break
@@ -135,7 +140,5 @@ class ImageCreator:
             information.add_partition(number, uuid, type, 0)
 
         information.save()
-        progress.stop()
-        print "completed."
-
+        self.notify_status("finish")
 

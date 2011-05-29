@@ -30,7 +30,7 @@ class WriterFactory:
         self._writer.open()
 
     def close(self):
-        self._writer.open()
+        self._writer.close()
 
     def write(self, data):
         return self._writer.write(data)

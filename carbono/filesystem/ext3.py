@@ -132,7 +132,8 @@ class Ext3(Generic):
         #FIXME: Ugly timing, but it works :~
         time.sleep(2)
         os.chdir('/')
-        run_command("umount %s" % self._tmpfs)
+        run_command("sync")
+        self._umount_tmpfs()
         run_command("umount %s" % self.path)
 
     def check(self):
