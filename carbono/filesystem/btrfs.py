@@ -16,17 +16,16 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import re
 from carbono.filesystem.generic import Generic
 from carbono.exception import *
 from carbono.utils import *
 
-class Ext(Generic):
-    MOUNT_OPTIONS = "-t extfs"
+class Btrfs(Generic):
+    MOUNT_OPTIONS = "-t btrfs"
 
     def get_used_size(self):
         """  """
-        p = subprocess.Popen("dumpe2fs -h %s" % self.path,
+        p = subprocess.Popen("btrfs-show %s" % self.path,
                              shell=True,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -34,23 +33,25 @@ class Ext(Generic):
 
         lines = p.stdout.readlines()
 
-        free_blocks = 0
-        block_size = 0
+        size = 0
         for l in lines:
-            if l.startswith("Free blocks:"):
-                free_blocks = int(l.split()[2])
-            elif l.startswith("Block size:"):
-                block_size = int(l.split()[2])
+            if l.startswith("\tTotal devices"):
+                size = l.split()[-1]
+                unit = size[-2:].upper()
+                size = float(size[:-2])
+                if unit == "KB":
+                    size = long(size * 1024)
+                elif unit == "MB":
+                    size = long(size * 1024 * 1024)
+                elif unit == "GB":
+                    size = long(size * 1024 * 1024 * 1024)
+                break
 
-        sectors_unused = free_blocks * (block_size/float(512))
-        sectors_unused = (self.geometry.end - self.geometry.start + 1) - sectors_unused
-        bytes = long(sectors_unused * 512)
-
-        return bytes
+        return size
 
     def open_to_read(self):
         """ """
-        cmd = "partclone.extfs -c -s %s -o -" % self.path
+        cmd = "partclone.btrfs -c -s %s -o -" % self.path
         try:
             self._fd = subprocess.Popen(cmd, shell=True,
                                         stdin=subprocess.PIPE,
@@ -61,7 +62,7 @@ class Ext(Generic):
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "partclone.extfs -r -o %s -s - " % self.path
+        cmd = "partclone.btrfs -r -o %s -s - " % self.path
         try:
             self._fd = subprocess.Popen(cmd, shell=True,
                                         stdin=subprocess.PIPE,
@@ -72,18 +73,19 @@ class Ext(Generic):
 
     def uuid(self):
         """ """
-        proc = subprocess.Popen(["blkid", self.path], stdout=subprocess.PIPE)
-        output = proc.stdout.read()
+        p = subprocess.Popen("btrfs-show %s" % self.path,
+                             shell=True,
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+
+        lines = p.stdout.readlines()
 
         uuid = None
-
-        if not len(output):
-            return uuid
-        
-        try:
-            uuid = re.search('(?<=UUID=")\w+-\w+-\w+-\w+-\w+', output).group(0)
-        except AttributeError:
-            pass
+        for l in lines:
+            seek = l.find("uuid: ")
+            if seek != -1:
+                uuid = l[seek+6:].strip()
 
         return uuid
 
@@ -96,8 +98,6 @@ class Ext(Generic):
         self._fd.close()
 
     def check(self):
-        ret = run_command("e2fsck -f -y -v %s" % self.path)
-        if ret in(0, 1, 2, 256):
-            return True
-        return False
+        """ """
+        return not run_command("btrfsck %s" % self.path)
 

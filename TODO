@@ -1,7 +1,7 @@
 * Multiprocessing
-* Btrfs support
 * GUI
 * Multicast
 * GPT
 * Plugin system
 * Hook scripts (post-restore)
+* Logging

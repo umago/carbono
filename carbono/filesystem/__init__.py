@@ -18,6 +18,7 @@
 from carbono.filesystem.generic import Generic
 from carbono.filesystem.ext import Ext
 from carbono.filesystem.ntfs import Ntfs
+from carbono.filesystem.btrfs import Btrfs
 from carbono.filesystem.linux_swap import LinuxSwap
 
 class FilesystemFactory:
@@ -32,10 +33,16 @@ class FilesystemFactory:
         """  """
         if self.type.startswith("ext"):
             fs_instance = Ext(self.path, self.type, self.geometry)
+
         elif self.type == "ntfs":
             fs_instance = Ntfs(self.path, self.type, self.geometry)
+
+        elif self.type == "btrfs":
+            fs_instance = Btrfs(self.path, self.type, self.geometry)
+
         elif self.type.startswith("linux-swap"):
             fs_instance = LinuxSwap(self.path, self.type, self.geometry)
+
         else:
             fs_instance = Generic(self.path, self.type, self.geometry)
 
