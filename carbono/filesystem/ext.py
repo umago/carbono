@@ -23,58 +23,41 @@ from carbono.filesystem.generic import Generic
 from carbono.exception import *
 from carbono.utils import *
 
-class Ext3(Generic):
-    MOUNT_OPTIONS = "-t ext3"
+class Ext(Generic):
+    MOUNT_OPTIONS = "-t extfs"
 
     def __init__(self, path, type, geometry):
         Generic.__init__(self, path, type, geometry)
         self._tmpfs = make_temp_dir()
 
-    def _mount_tmpfs(self):
-        """  """
-        # FIXME: Ret code inst reliable
-        if not os.path.ismount(self._tmpfs):
-            ret = run_command("mount -t tmpfs -o size=100M tmpfs %s" % self._tmpfs)
-            if ret is not 0:
-                return False
-
-        return True
-    
-    def _umount_tmpfs(self):
-        """  """
-        # FIXME: Ret code inst reliable
-        if os.path.ismount(self._tmpfs):
-            ret = run_command("umount %s" % self._tmpfs)
-            if ret is not 0:
-                return False
-
-        return True
-
-    def _make_filesystem(self, uuid=None):
-        """ """
-        param = ''
-        if uuid is not None:
-            param = "-U %s" % uuid
-
-        ret = run_command("mkfs.ext3 %s %s" % (param, self.path))
-        return ret
-
     def get_used_size(self):
         """  """
-        tmpd = self.mount()
 
-        try:
-            out = os.popen("df -k | grep %s" % tmpd).read()
-            size = long(out.split()[2]) * 1024
-        except Exception:
-            raise ErrorGettingUsedSize
+        p = subprocess.Popen("dumpe2fs -h %s" % self.path,
+                             shell=True,
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
 
-        self.umount(tmpd)
-        return size
+        lines = p.stdout.readlines()
+
+        free_blocks = 0
+        block_size = 0
+        for l in lines:
+            if l.startswith("Free blocks:"):
+                free_blocks = int(l.split()[2])
+            elif l.startswith("Block size:"):
+                block_size = int(l.split()[2])
+
+        sectors_unused = free_blocks * (block_size/float(512))
+        sectors_unused = (self.geometry.end - self.geometry.start + 1) - sectors_unused
+        bytes = long(sectors_unused * 512)
+
+        return bytes
 
     def open_to_read(self):
         """ """
-        cmd = "dump -0 -q -f - %s 2> /dev/null" % self.path
+        cmd = "partclone.extfs -c -s %s -o -" % self.path
         try:
             self._fd = subprocess.Popen(cmd, shell=True,
                                         stdin=subprocess.PIPE,
@@ -85,25 +68,14 @@ class Ext3(Generic):
 
     def open_to_write(self, uuid=None):
         """ """
-        run_command("umount %s" % self.path)
-
-        ret = self._make_filesystem(uuid)
-        if ret is not 0:
-            raise ErrorOpenToWrite
-
-        tmpd = self.mount()
-        if self._mount_tmpfs():
-            os.chdir(tmpd)
-            cmd = "restore -u -y -r -T %s -f -" % self._tmpfs
-            try:
-                self._fd = subprocess.Popen(cmd, shell=True,
-                                            stdin=subprocess.PIPE,
-                                            stderr=subprocess.PIPE,
-                                            stdout=subprocess.PIPE).stdin
-            except:
-                raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
-        else:
-            raise ErrorOpenToWrite("Unable to mount a tmpfs filesystem")
+        cmd = "partclone.extfs -r -o %s -s - " % self.path
+        try:
+            self._fd = subprocess.Popen(cmd, shell=True,
+                                        stdin=subprocess.PIPE,
+                                        stderr=subprocess.PIPE,
+                                        stdout=subprocess.PIPE).stdin
+        except:
+            raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
 
     def uuid(self):
         """ """
@@ -129,12 +101,6 @@ class Ext3(Generic):
             return
 
         self._fd.close()
-        #FIXME: Ugly timing, but it works :~
-        time.sleep(2)
-        os.chdir('/')
-        run_command("sync")
-        self._umount_tmpfs()
-        run_command("umount %s" % self.path)
 
     def check(self):
         ret = run_command("e2fsck -f -y -v %s" % self.path)

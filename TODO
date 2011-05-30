@@ -1,9 +1,7 @@
 * Multiprocessing
-* Ext4 support
 * Btrfs support
 * GUI
 * Multicast
-* Improve Ext3 Class
 * GPT
 * Plugin system
 * Hook scripts (post-restore)

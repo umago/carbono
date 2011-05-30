@@ -16,7 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 from carbono.filesystem.generic import Generic
-from carbono.filesystem.ext3 import Ext3
+from carbono.filesystem.ext import Ext
 from carbono.filesystem.ntfs import Ntfs
 from carbono.filesystem.linux_swap import LinuxSwap
 
@@ -30,8 +30,8 @@ class FilesystemFactory:
 
     def _get_filesystem_instance(self):
         """  """
-        if self.type == "ext3":
-            fs_instance = Ext3(self.path, self.type, self.geometry)
+        if self.type.startswith("ext"):
+            fs_instance = Ext(self.path, self.type, self.geometry)
         elif self.type == "ntfs":
             fs_instance = Ntfs(self.path, self.type, self.geometry)
         elif self.type.startswith("linux-swap"):
