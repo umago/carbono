@@ -27,6 +27,8 @@ from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
 
+from carbono.log import log
+
 class ImageCreator:
 
     def __init__(self, source_device, output_folder, \
@@ -68,11 +70,13 @@ class ImageCreator:
             for part in partition_list:
                 self.notify_status("checking_filesystem", {"device": part.path})
                 if not part.filesystem.check():
-                    raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)       
+                    log.error("(%s) Filesystem is not clean" % part.path)
+                    raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)
 
         # fill partitions with zeroes
         if self.raw and self.fill_with_zeros:
             for part in partition_list:
+                log.info("(%s) Filling with zeros" % part.path)
                 self.notify_status("filling_with_zeros", {"device": part.path})
                 part.filesystem.fill_with_zeros()
 
@@ -93,6 +97,7 @@ class ImageCreator:
         current_percent = -1
 
         for part in partition_list:
+            log.info("Creating image of %s" % part.path)
             number = part.get_number()
             uuid = part.filesystem.uuid()
             type = part.filesystem.type
@@ -134,6 +139,7 @@ class ImageCreator:
 
         swap = disk.get_swap_partition()
         if swap is not None:
+            log.info("Swap path %s" % swap.path)
             number = swap.get_number()
             uuid = swap.filesystem.uuid()
             type = swap.filesystem.type
@@ -141,4 +147,5 @@ class ImageCreator:
 
         information.save()
         self.notify_status("finish")
+        log.info("Creation finished")
 

@@ -28,6 +28,8 @@ from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
 
+from carbono.log import log
+
 class ImageRestorer:
 
     def __init__(self, image_folder, target_device):
@@ -56,7 +58,8 @@ class ImageRestorer:
 
         if device.is_disk() != \
            information.get_image_is_disk():
-            raise ErrorRestoringImage("Invalid target dispositive")
+            log.error("Invalid target device %s" % device.path)
+            raise ErrorRestoringImage("Invalid target device")
 
         try:
             disk = Disk(device)
@@ -65,9 +68,11 @@ class ImageRestorer:
                 device.fix_disk_label()
                 disk = Disk(device)
             except:
+                log.error("Unrecognized disk label")
                 raise ErrorRestoringImage("Unrecognized disk label")
 
         if information.get_image_is_disk():
+            log.info("Restoring MBR and Disk Layout")
             mbr = Mbr(self.image_path)
             mbr.restore_from_file(self.target_device)
             dlm = DiskLayoutManager(self.image_path)
@@ -84,6 +89,8 @@ class ImageRestorer:
                 partition = parent_disk.get_partition_by_path(
                                             self.target_device,
                                             part.type)
+
+            log.info("Restoring partition %s" % partition.path)
 
             if partition is None:
                 raise ErrorRestoringImage("No valid partitions found")
@@ -124,3 +131,4 @@ class ImageRestorer:
             partition.filesystem.close()
 
         self.notify_status("finish")
+        log.info("Restoration finished")
