@@ -18,18 +18,19 @@
 import logging
 
 from carbono.utils import *
+from carbono.config import *
 
 __all__ = ["log"]
 
 @singleton
 class Logger(logging.Logger):
-    def __init__(self, name="carbono", logfile="/var/tmp/carbono.log"):
+    def __init__(self, name="carbono", logfile=LOG_FILE):
         logging.Logger.__init__(self, name)
-        hdlr = logging.FileHandler(logfile)
+        handler = logging.FileHandler(logfile)
         formatter = logging.Formatter("%(asctime)s %(levelname)s [%(filename)s " \
                                       "-> %(funcName)s] %(message)s", "%H:%M:%S")
-        hdlr.setFormatter(formatter)
-        self.addHandler(hdlr) 
+        handler.setFormatter(formatter)
+        self.addHandler(handler) 
         self.setLevel(logging.DEBUG)
 
 log = Logger()

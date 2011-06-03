@@ -17,4 +17,4 @@
 
 FILE_PATTERN = "%s-%d-%d.data"
 BLOCK_SIZE = 4096
-LOG_FILE = "/var/log/carbono.log"
+LOG_FILE = "/var/tmp/carbono.log"

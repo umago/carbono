@@ -4,4 +4,4 @@
 * GPT
 * Plugin system
 * Hook scripts (post-restore)
-* Logging
+* Improve log system to log to network instead of file
