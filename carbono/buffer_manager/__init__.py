@@ -15,22 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-from carbono.writer.generic import GenericWriter
-from carbono.writer.compressed import CompressedWriter
+from carbono.buffer_manager.work_manager import WorkManager
+from carbono.buffer_manager.dummy_manager import DummyManager
 
-class WriterFactory:
+class BufferManagerFactory:
 
-    def __init__(self, path, compressor_level):
-        if compressor_level:
-            self._writer = CompressedWriter(path, compressor_level)
+    def __init__(self, read_callback, job_callback=None):
+        if job_callback:
+            self._manager = WorkManager(read_callback, job_callback)
         else:
-            self._writer = GenericWriter(path)
+            self._manager = DummyManager(read_callback)
 
-    def open(self):
-        self._writer.open()
+    def start(self):
+        self._manager.start()
 
-    def close(self):
-        self._writer.close()
+    def join(self):
+        self._manager.join()
 
-    def write(self, data):
-        return self._writer.write(data)
+    def put(self, data):
+        self._manager.put(data)
+
+    def stop(self):
+        self._manager.stop()
+
+    @property
+    def output_buffer(self):
+        return self._manager.output_buffer

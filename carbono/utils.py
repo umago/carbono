@@ -20,8 +20,23 @@ import tempfile
 import multiprocessing
 import random
 
+from threading import Thread, Event
 from os.path import realpath
 
+class Timer(Thread):
+    def __init__(self, callback, timeout=2):
+        Thread.__init__(self)
+        self.callback = callback
+        self.timeout = timeout
+        self.event = Event()
+
+    def run(self):
+        while not self.event.wait(self.timeout):
+            self.callback()
+
+    def stop(self):
+        self.event.set()
+ 
 def run_command(cmd):
     """  """
     p = subprocess.Popen(cmd, shell=True,
@@ -62,6 +77,19 @@ def singleton(cls):
         return instance_list[0]
     return getinstance
 
-def get_available_processors():
+def available_processors():
     return multiprocessing.cpu_count()
 
+def available_memory(percent=100):
+    free = 0
+    with open("/proc/meminfo", 'r') as f:
+        for line in f:
+            if line.startswith("MemFree:"):
+                free = int(line.split()[1]) * 1024
+                break
+
+    if percent < 100:
+        free = (free * percent) / 100
+
+    return free
+    

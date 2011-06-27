@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-FILE_PATTERN = "%s-%d-%d.data"
-BLOCK_SIZE = 4096
+FILE_PATTERN = "{name}-{partition}-{volume}.data"
+BLOCK_SIZE = 1048576 # 1MB
 LOG_FILE = "/var/tmp/carbono.log"
+EOF = -1

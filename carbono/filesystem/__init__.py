@@ -63,11 +63,11 @@ class FilesystemFactory:
     def get_used_size(self):
         return self._fs.get_used_size()
 
-    def read(self, size):
-        return self._fs.read(size)
+    def read_block(self):
+        return self._fs.read_block()
 
-    def write(self, data):
-        self._fs.write(data)
+    def write_block(self, data):
+        self._fs.write_block(data)
 
     def close(self):
         self._fs.close()

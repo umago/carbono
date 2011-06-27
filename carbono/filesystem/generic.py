@@ -59,15 +59,15 @@ class Generic:
         except:
             raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
 
-    def read(self, size):
+    def read_block(self):
         """ """
         if self._fd is None or \
            self._fd.closed:
             raise ErrorReadingFromDevice 
             
-        return self._fd.read(size)
+        return self._fd.read(BLOCK_SIZE)
 
-    def write(self, data):
+    def write_block(self, data):
         """  """
         if self._fd is None or \
            self._fd.closed:

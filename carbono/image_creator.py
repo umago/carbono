@@ -22,7 +22,9 @@ from carbono.disk import Disk
 from carbono.mbr import Mbr
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
-from carbono.writer import WriterFactory
+from carbono.compressor import Compressor
+from carbono.buffer_manager import BufferManagerFactory
+from carbono.image_writer import ImageWriter
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -103,40 +105,36 @@ class ImageCreator:
             type = part.filesystem.type
 
             part.filesystem.open_to_read()
-            split_volume = 1
-            while True:
-                file_name = FILE_PATTERN % (self.image_name, number, split_volume)
-                file_path = self.target_path + file_name
 
-                writer = WriterFactory(file_path, self.compressor_level)
-                writer.open()
+            compact_callback = None
+            if self.compressor_level:
+                compressor = Compressor(self.compressor_level)
+                compact_callback = compressor.compact
 
-                next_partition = False
-                total_written = 0
-                while True:
-                    data = part.filesystem.read(BLOCK_SIZE)
-                    if not len(data):
-                        next_partition = True
-                        break
-                    bytes_written = writer.write(data)
-                    total_written += bytes_written
+            buffer_manager = BufferManagerFactory(part.filesystem.read_block,
+                                                  compact_callback)
+            buffer_manager.start()
+            buffer = buffer_manager.output_buffer
 
-                    processed_blocks += 1
-                    percent = (processed_blocks/float(total_blocks)) * 100
-                    if current_percent != percent:
-                        current_percent = percent
-                        self.notify_status("progress", {"percent": current_percent})
+            pattern = FILE_PATTERN.format(name=self.image_name,
+                                          partition=number,
+                                          volume="{volume}")
+            pattern = self.target_path + pattern
 
-                    if self.split_size:
-                        if (total_written + bytes_written) >= self.split_size:
-                            break
+            image_writer = ImageWriter(buffer_manager.output_buffer,
+                                       pattern, total_blocks,
+                                       self.split_size,
+                                       self.notify_status)
+            image_writer.start()
+            image_writer.join()
 
-                writer.close()
-                if next_partition: break
-                split_volume += 1
+            buffer_manager.join()
             part.filesystem.close()
-            information.add_partition(number, uuid, type, split_volume)
+            information.add_partition(number, uuid, type, image_writer.volumes)
 
+        # We dont need to save the data of the swap partition
+        # we just copy the informations and re-create when
+        # restoring
         swap = disk.get_swap_partition()
         if swap is not None:
             log.info("Swap path %s" % swap.path)

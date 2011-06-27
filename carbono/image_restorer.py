@@ -108,13 +108,15 @@ class ImageRestorer:
 
             current_volume = 1
             while True:
-                file_name = FILE_PATTERN % (image_name, part.number, current_volume)
+                file_name = FILE_PATTERN.format(name=image_name,
+                                                partition=part.number,
+                                                volume=current_volume)
                 file_path = self.image_path + file_name
 
                 reader = ReaderFactory(file_path, compressor_level)
 
                 for data in reader:
-                    partition.filesystem.write(data)
+                    partition.filesystem.write_block(data)
 
                     processed_blocks += 1
                     percent = (processed_blocks/float(total_blocks)) * 100
