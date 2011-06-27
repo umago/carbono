@@ -47,8 +47,8 @@ class ImageWriter(Thread):
         self.active = True
         self.timer.start()
 
-        total_written = 0
         while self.active:
+            total_written = 0
             file_path = self.pattern.format(volume=self.volumes)
 
             fd = open(file_path, "wb")
