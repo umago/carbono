@@ -16,12 +16,12 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import time
-from multiprocessing import Process, Manager, Event, cpu_count
+from multiprocessing import Process, Manager, Event
 from multiprocessing.managers import BaseManager
 from threading import Thread
 from copy import deepcopy
 
-from carbono.reorder_buffer import ReoderBuffer
+from carbono.buffer_manager.reorder_buffer import ReoderBuffer
 from carbono.utils import *
 from carbono.config import *
 
@@ -61,7 +61,7 @@ class WorkManager(Thread):
         self.job = job_callback
 
         self.manager = Manager()
-        self.num_cores = cpu_count()
+        self.num_cores = available_processors()
         self._block_number = 0
         self._worker_list = list()
         self.active = False

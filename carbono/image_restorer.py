@@ -23,7 +23,9 @@ from carbono.disk import Disk
 from carbono.mbr import Mbr
 from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
-from carbono.reader import ReaderFactory
+from carbono.image_reader import ImageReaderFactory
+from carbono.compressor import Compressor
+from carbono.buffer_manager import BufferManagerFactory
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -35,6 +37,12 @@ class ImageRestorer:
     def __init__(self, image_folder, target_device):
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
+ 
+        self.timer = Timer(self.notify_percent)
+        self.total_blocks = 0
+        self.processed_blocks = 0
+        self.current_percent = -1
+        self.active = False
 
     def connect_status_callback(self, callback):
         """ """
@@ -45,14 +53,21 @@ class ImageRestorer:
         if hasattr(self, "status_callback"):
             self.status_callback(action, dict) 
 
+    def notify_percent(self):
+        percent = (self.processed_blocks/float(self.total_blocks)) * 100
+        if self.current_percent != percent:
+            self.current_percent = percent
+            self.notify_status("progress", {"percent": self.current_percent})
+
     def restore_image(self):
         """ """
+        self.active = True
         information = Information(self.image_path)
         information.load()
         image_name = information.get_image_name()
         compressor_level = information.get_image_compressor_level()
         total_bytes = information.get_image_total_bytes()
-        total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
+        self.total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
 
         device = Device(self.target_device)
 
@@ -78,6 +93,7 @@ class ImageRestorer:
             dlm = DiskLayoutManager(self.image_path)
             dlm.restore_from_file(disk)
 
+        self.timer.start()
         partitions = information.get_partitions()
         for part in partitions:
             if information.get_image_is_disk():
@@ -103,34 +119,43 @@ class ImageRestorer:
             if partition.filesystem.is_swap():
                 continue
 
-            processed_blocks = 0
-            current_percent = -1
+            pattern = FILE_PATTERN.format(name=image_name,
+                                          partition=part.number,
+                                          volume="{volume}")
+            pattern = self.image_path + pattern
 
-            current_volume = 1
-            while True:
-                file_name = FILE_PATTERN.format(name=image_name,
-                                                partition=part.number,
-                                                volume=current_volume)
-                file_path = self.image_path + file_name
+            volumes = 1
+            if hasattr(part, "volumes"):
+                volumes = part.volumes
 
-                reader = ReaderFactory(file_path, compressor_level)
+            image_reader = ImageReaderFactory(pattern, volumes,
+                                              compressor_level)
 
-                for data in reader:
-                    partition.filesystem.write_block(data)
+            extract_callback = None
+            if compressor_level:
+                compressor = Compressor(compressor_level)
+                extract_callback = compressor.extract
 
-                    processed_blocks += 1
-                    percent = (processed_blocks/float(total_blocks)) * 100
-                    if current_percent != percent:
-                        current_percent = percent
-                        self.notify_status("progress", {"percent": current_percent})
+            buffer_manager = BufferManagerFactory(image_reader.read_block,
+                                                  extract_callback)
+            buffer_manager.start()
 
-                if hasattr(part, "volumes"):
-                    if current_volume < part.volumes:
-                        current_volume += 1
-                        continue
-                break
+            buffer = buffer_manager.output_buffer
+            while self.active:
+                data = buffer.get()
+                if data == EOF:
+                    break
+                partition.filesystem.write_block(data)
+                self.processed_blocks += 1
 
+            buffer_manager.join()
             partition.filesystem.close()
 
+        self.stop()
         self.notify_status("finish")
         log.info("Restoration finished")
+
+    def stop(self):
+        self.active = False
+        self.timer.stop()        
+

@@ -15,23 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-from carbono.compressor import Compressor
-from carbono.reader.generic import GenericReader
+from carbono.image_reader.generic import GenericReader
+from carbono.image_reader.compressed import CompressedReader
 
-class CompressedReader(GenericReader):
+class ImageReaderFactory:
 
-    def __init__(self, path, compressor_level):
-        GenericReader.__init__(self, path)
-        self.compressor = Compressor(compressor_level)
+    def __init__(self, pattern, volumes, compressor_level):
+        if compressor_level:
+            self._reader = CompressedReader(pattern, volumes, compressor_level)
+        else:
+            self._reader = GenericReader(pattern, volumes)
 
-    def next(self):
-        self.open()
-        if not self._check_fd():
-            header = self._fd.read(self.compressor.get_header_size())
-            if not len(header):
-                self.close()
-                raise StopIteration
-            size = self.compressor.read_block_header(header)
-            cdata = self._fd.read(size)
-            data = self.compressor.extract(cdata)
-            return data
+    def read_block(self):
+        return self._reader.read_block()

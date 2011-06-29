@@ -114,7 +114,6 @@ class ImageCreator:
             buffer_manager = BufferManagerFactory(part.filesystem.read_block,
                                                   compact_callback)
             buffer_manager.start()
-            buffer = buffer_manager.output_buffer
 
             pattern = FILE_PATTERN.format(name=self.image_name,
                                           partition=number,
