@@ -24,7 +24,6 @@ from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
 from carbono.compressor import Compressor
 from carbono.buffer_manager import BufferManagerFactory
-from carbono.image_writer import ImageWriter
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -45,6 +44,12 @@ class ImageCreator:
         self.split_size = split_size
         self.fill_with_zeros = fill_with_zeros
 
+        self.timer = Timer(self.notify_percent)
+        self.total_blocks = 0
+        self.processed_blocks = 0
+        self.current_percent = -1
+        self.active = False
+
     def connect_status_callback(self, callback):
         """ """
         self.status_callback = callback
@@ -54,8 +59,15 @@ class ImageCreator:
         if hasattr(self, "status_callback"):
             self.status_callback(action, dict) 
 
+    def notify_percent(self):
+        percent = (self.processed_blocks/float(self.total_blocks)) * 100
+        if percent > self.current_percent:
+            self.current_percent = percent
+            self.notify_status("progress", {"percent": percent})
+
     def create_image(self):
         """ """
+        self.active = True
         device = Device(self.device_path)
         disk = Disk(device)
 
@@ -87,7 +99,7 @@ class ImageCreator:
         for part in partition_list:
             total_bytes += part.filesystem.get_used_size()
        
-        total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
+        self.total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
 
         information = Information(self.target_path)
         information.set_image_is_disk(device.is_disk())
@@ -95,9 +107,7 @@ class ImageCreator:
         information.set_image_total_bytes(total_bytes)
         information.set_image_compressor_level(self.compressor_level)
 
-        processed_blocks = 0 # Used to calc the percent
-        current_percent = -1
-
+        self.timer.start()
         for part in partition_list:
             log.info("Creating image of %s" % part.path)
             number = part.get_number()
@@ -115,21 +125,38 @@ class ImageCreator:
                                                   compact_callback)
             buffer_manager.start()
 
-            pattern = FILE_PATTERN.format(name=self.image_name,
-                                          partition=number,
-                                          volume="{volume}")
-            pattern = self.target_path + pattern
+            buffer = buffer_manager.output_buffer 
+            volumes = 1
+            while self.active:
+                total_written = 0
+                pattern = FILE_PATTERN.format(name=self.image_name,
+                                              partition=number,
+                                              volume=volumes)
+                file_path = self.target_path + pattern
+                fd = open(file_path, "wb")
 
-            image_writer = ImageWriter(buffer_manager.output_buffer,
-                                       pattern, total_blocks,
-                                       self.split_size,
-                                       self.notify_status)
-            image_writer.start()
-            image_writer.join()
+                next_partition = False
+                while self.active:
+                    data = buffer.get()
+                    if data == EOF:
+                        next_partition = True
+                        break
+                    fd.write(data)
+                    bytes_written = len(data)
+                    total_written += bytes_written
+                    self.processed_blocks += 1
+
+                    if self.split_size:
+                        if (total_written + bytes_written) >= self.split_size:
+                            volumes += 1
+                            break
+
+                fd.close()
+                if next_partition: break
 
             buffer_manager.join()
             part.filesystem.close()
-            information.add_partition(number, uuid, type, image_writer.volumes)
+            information.add_partition(number, uuid, type, volumes)
 
         # We dont need to save the data of the swap partition
         # we just copy the informations and re-create when
@@ -143,6 +170,11 @@ class ImageCreator:
             information.add_partition(number, uuid, type, 0)
 
         information.save()
+        self.stop()
         self.notify_status("finish")
         log.info("Creation finished")
+
+    def stop(self):
+        self.active = False
+        self.timer.stop()        
 
