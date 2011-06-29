@@ -34,6 +34,7 @@ class CompressedReader(GenericReader):
                     self.current_volume += 1
                     self.open()
                     data = self.read_block()
+                    return data
                 else:
                     return None
             size = self.compressor.read_block_header(header)
