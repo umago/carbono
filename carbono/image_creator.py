@@ -109,6 +109,8 @@ class ImageCreator:
 
         self.timer.start()
         for part in partition_list:
+            if not self.active: break
+
             log.info("Creating image of %s" % part.path)
             number = part.get_number()
             uuid = part.filesystem.uuid()
@@ -121,11 +123,11 @@ class ImageCreator:
                 compressor = Compressor(self.compressor_level)
                 compact_callback = compressor.compact
 
-            buffer_manager = BufferManagerFactory(part.filesystem.read_block,
+            self.buffer_manager = BufferManagerFactory(part.filesystem.read_block,
                                                   compact_callback)
-            buffer_manager.start()
+            self.buffer_manager.start()
 
-            buffer = buffer_manager.output_buffer 
+            buffer = self.buffer_manager.output_buffer 
             volumes = 1
             while self.active:
                 total_written = 0
@@ -154,7 +156,7 @@ class ImageCreator:
                 fd.close()
                 if next_partition: break
 
-            buffer_manager.join()
+            self.buffer_manager.join()
             part.filesystem.close()
             information.add_partition(number, uuid, type, volumes)
 
@@ -175,6 +177,8 @@ class ImageCreator:
         log.info("Creation finished")
 
     def stop(self):
+        if self.active:
+            self.buffer_manager.stop()
         self.active = False
         self.timer.stop()        
 

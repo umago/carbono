@@ -1,10 +1,9 @@
 carbono
 =======
 
-carbono is a small disk cloning tool which allows you to create
-and restore images of your complete hard disk or partition.
-Its also optimize the resulting image using tools to manipulate the 
-filesystem and compacting the data blocks.
+carbono is a hard disk imaging and recovery application. Carbono
+optimize the resulting image saving and compacting only the used blocks in the
+hard disk. Multiprocessing is used to deal with performance problems.
 
 Testing
 -------

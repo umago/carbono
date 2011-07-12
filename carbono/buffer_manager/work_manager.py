@@ -37,7 +37,9 @@ class Worker(Process):
         self.event.set()
         while self.event.is_set():
             block_number, data = self.buffer.get()
-            if data == EOF: break
+            if data == EOF:
+                self.stop()
+                break
             worked_data = self.job(data)
 
             while self.event.is_set():

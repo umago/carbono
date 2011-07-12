@@ -1,6 +1,5 @@
 * GUI
-* Multicast
-* GPT
-* Plugin system
+* Multicast server
 * Hook scripts (post-restore)
 * Improve log system to log to network instead of file
+* Base System

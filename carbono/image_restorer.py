@@ -96,6 +96,8 @@ class ImageRestorer:
         self.timer.start()
         partitions = information.get_partitions()
         for part in partitions:
+            if not self.active: break
+            
             if information.get_image_is_disk():
                 partition = disk.get_partition_by_number(part.number, part.type)
             else:
@@ -136,11 +138,11 @@ class ImageRestorer:
                 compressor = Compressor(compressor_level)
                 extract_callback = compressor.extract
 
-            buffer_manager = BufferManagerFactory(image_reader.read_block,
+            self.buffer_manager = BufferManagerFactory(image_reader.read_block,
                                                   extract_callback)
-            buffer_manager.start()
+            self.buffer_manager.start()
 
-            buffer = buffer_manager.output_buffer
+            buffer = self.buffer_manager.output_buffer
             while self.active:
                 data = buffer.get()
                 if data == EOF:
@@ -148,7 +150,7 @@ class ImageRestorer:
                 partition.filesystem.write_block(data)
                 self.processed_blocks += 1
 
-            buffer_manager.join()
+            self.buffer_manager.join()
             partition.filesystem.close()
 
         self.stop()
@@ -156,6 +158,8 @@ class ImageRestorer:
         log.info("Restoration finished")
 
     def stop(self):
+        if self.active:
+            self.buffer_manager.stop()
         self.active = False
         self.timer.stop()        
 
