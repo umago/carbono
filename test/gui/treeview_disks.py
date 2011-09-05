@@ -43,8 +43,13 @@ class TreeViewDisks(gtk.TreeView):
 
         it = self.treestore.append(None, ["/dev/sda", False, '', '160 GB', ''])
         self.treestore.append(it, ["/dev/sda1", False, "ext3", "50 GB", "20 GB"])
-        self.treestore.append(it, ["/dev/sda1", False, "ext3", "50 GB", "20 GB"])
-        self.treestore.append(it, ["/dev/sda1", False, "ext3", "50 GB", "20 GB"])
+        self.treestore.append(it, ["/dev/sda2", False, "ext3", "50 GB", "20 GB"])
+        self.treestore.append(it, ["/dev/sda3", False, "ext3", "50 GB", "20 GB"])
+
+        it = self.treestore.append(None, ["/dev/sdb", False, '', '160 GB', ''])
+        self.treestore.append(it, ["/dev/sdb1", False, "ext3", "50 GB", "20 GB"])
+        self.treestore.append(it, ["/dev/sdb2", False, "ext3", "50 GB", "20 GB"])
+        self.treestore.append(it, ["/dev/sdb3", False, "ext3", "50 GB", "20 GB"])
 
         self.append_column(column_device)
         self.append_column(column_selected)
@@ -65,14 +70,8 @@ class TreeViewDisks(gtk.TreeView):
     def refresh(self, widget):
         print "Refreshhh 8D~"
 
-    def device_toggled(self, widget, path, col=None):
-        """Select or unselected the toggled device"""
+    def clear_tree(self):
         giter = self.treestore.get_iter_first()
-
-        if self.treestore[path][1]:
-            self.treestore[path][1] = False
-            return
-
         while giter:
             if self.treestore.iter_has_child(giter):
                 for i in xrange(self.treestore.iter_n_children(giter)):
@@ -81,6 +80,25 @@ class TreeViewDisks(gtk.TreeView):
             self.treestore.set_value(giter, 1, False)
             giter = self.treestore.iter_next(giter)
 
+    def toggle_group(self, parent, value):
+        for i in xrange(self.treestore.iter_n_children(parent)):
+            child = self.treestore.iter_nth_child(parent, i)
+            self.treestore.set_value(child, 1, value)
+
+    def device_toggled(self, widget, path, col=None):
+        """Select or unselected the toggled device"""
+        self.clear_tree()
+        giter = self.treestore.get_iter(path)
+        if self.treestore.iter_has_child(giter):
+            if not self.treestore[path][1]:
+                self.toggle_group(giter, True)
+            else:
+                self.toggle_group(giter, False)
+        else:
+            parent = self.treestore.iter_parent(giter)
+            self.treestore.set_value(parent, 1, False)
+            self.toggle_group(parent, False)
+
         self.treestore[path][1] = not self.treestore[path][1]
 
     def get_selected_device(self):
@@ -88,6 +106,8 @@ class TreeViewDisks(gtk.TreeView):
         giter = self.treestore.get_iter_first()
 
         while giter:
+            if self.treestore.get_value(giter, 1):
+                break
             if self.treestore.iter_has_child(giter):
                 for i in xrange(self.treestore.iter_n_children(giter)):
                     child = self.treestore.iter_nth_child(giter, i)
