@@ -34,7 +34,7 @@ class ImageCreator:
 
     def __init__(self, source_device, output_folder, \
                  image_name="image", compressor_level=6, raw=False, \
-                 split_size=0, fill_with_zeros=False):
+                 split_size=0, create_iso=False, fill_with_zeros=False):
 
         self.image_name = image_name
         self.device_path = source_device
@@ -42,6 +42,7 @@ class ImageCreator:
         self.compressor_level = compressor_level
         self.raw = raw
         self.split_size = split_size
+        self.create_iso = create_iso
         self.fill_with_zeros = fill_with_zeros
 
         self.timer = Timer(self.notify_percent)
@@ -107,7 +108,11 @@ class ImageCreator:
         information.set_image_total_bytes(total_bytes)
         information.set_image_compressor_level(self.compressor_level)
 
+        # TODO: Abstract this whole part, when creating isos,
+        # splitting in files, etc...
+
         self.timer.start()
+        remaining_size = self.split_size # Used when creating iso
         for part in partition_list:
             if not self.active: break
 
@@ -130,7 +135,7 @@ class ImageCreator:
             buffer = self.buffer_manager.output_buffer 
             volumes = 1
             while self.active:
-                total_written = 0
+                total_written = 0 # Used to help splitting the file
                 pattern = FILE_PATTERN.format(name=self.image_name,
                                               partition=number,
                                               volume=volumes)
@@ -142,15 +147,19 @@ class ImageCreator:
                     data = buffer.get()
                     if data == EOF:
                         next_partition = True
+                        if self.create_iso:
+                            remaining_size = self.split_size - total_written
                         break
                     fd.write(data)
-                    bytes_written = len(data)
-                    total_written += bytes_written
                     self.processed_blocks += 1
 
                     if self.split_size:
-                        if (total_written + bytes_written) >= self.split_size:
+                        bytes_written = len(data)
+                        total_written += bytes_written
+
+                        if (total_written + bytes_written) >= remaining_size:
                             volumes += 1
+                            remaining_size = self.split_size
                             break
 
                 fd.close()

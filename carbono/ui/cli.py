@@ -57,6 +57,11 @@ class Cli:
                                 action="store_true",
                                 default=False,
                                 help="Create raw images.",)
+        create_group.add_option("-m", "--iso", 
+                                dest="iso", 
+                                action="store_true",
+                                default=False,
+                                help="Create iso(s) from file(s).",)
         create_group.add_option("-z", "--fill-with-zeros", 
                                 dest="fill_with_zeros", 
                                 action="store_true",
@@ -114,7 +119,7 @@ class Cli:
 
             ic = ImageCreator(opt.source_device, opt.output_folder, \
                               opt.image_name, opt.compressor_level, \
-                              opt.raw, split_size, opt.fill_with_zeros)
+                              opt.raw, split_size, opt.iso, opt.fill_with_zeros)
             ic.connect_status_callback(self.status)
             ic.create_image()
 

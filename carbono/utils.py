@@ -31,8 +31,9 @@ class Timer(Thread):
         self.event = Event()
 
     def run(self):
-        while not self.event.wait(self.timeout):
+        while not self.event.is_set():
             self.callback()
+            self.event.wait(self.timeout)
 
     def stop(self):
         self.event.set()
