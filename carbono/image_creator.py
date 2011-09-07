@@ -24,6 +24,7 @@ from carbono.disk_layout_manager import DiskLayoutManager
 from carbono.information import Information
 from carbono.compressor import Compressor
 from carbono.buffer_manager import BufferManagerFactory
+from carbono.iso_creator import IsoCreator
 from carbono.exception import *
 from carbono.utils import *
 from carbono.config import *
@@ -111,8 +112,11 @@ class ImageCreator:
         # TODO: Abstract this whole part, when creating isos,
         # splitting in files, etc...
 
+
         self.timer.start()
         remaining_size = self.split_size # Used when creating iso
+        slices = dict()                  # Used when creating iso
+        iso_volume = 1                   # Used when creating iso
         for part in partition_list:
             if not self.active: break
 
@@ -148,7 +152,10 @@ class ImageCreator:
                     if data == EOF:
                         next_partition = True
                         if self.create_iso:
-                            remaining_size = self.split_size - total_written
+                            remaining_size -= total_written
+                            if not slices.has_key(iso_volume):
+                                slices[iso_volume] = list()
+                            slices[iso_volume].append(file_path)
                         break
                     fd.write(data)
                     self.processed_blocks += 1
@@ -160,6 +167,11 @@ class ImageCreator:
                         if (total_written + bytes_written) >= remaining_size:
                             volumes += 1
                             remaining_size = self.split_size
+                            if self.create_iso:
+                                if not slices.has_key(iso_volume):
+                                    slices[iso_volume] = list()
+                                slices[iso_volume].append(file_path)
+                                iso_volume += 1
                             break
 
                 fd.close()
@@ -182,6 +194,12 @@ class ImageCreator:
 
         information.save()
         self.stop()
+
+        if self.create_iso:
+            iso_creator = IsoCreator(self.target_path, slices,
+                                     self.notify_status)
+            iso_creator.run()
+
         self.notify_status("finish")
         log.info("Creation finished")
 

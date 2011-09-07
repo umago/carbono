@@ -37,7 +37,38 @@ class Timer(Thread):
 
     def stop(self):
         self.event.set()
- 
+
+
+class RunCmd:
+    def __init__(self, cmd):
+        self.cmd = cmd
+        self.stdout = None
+        self.stdin = None
+        self.stderr = None
+
+    def run(self):
+        self.process = subprocess.Popen(self.cmd, shell=True,
+                                        stdout=subprocess.PIPE,
+                                        stdin=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+        self.stdout = self.process.stdout
+        self.stdin = self.process.stdin
+        self.stderr = self.process.stderr
+
+    def wait(self):
+        if hasattr(self, "process"):
+            self.process.wait()
+            return self.process.returncode
+
+    def stop(self):
+        if hasattr(self, "process"):
+            try:
+                self.process.kill()
+            except OSError, e:
+                if e.errno == errno.ESRCH:
+                    pass
+
+
 def run_command(cmd):
     """  """
     p = subprocess.Popen(cmd, shell=True,

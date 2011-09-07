@@ -87,11 +87,14 @@ class Cli:
         if action == "progress":
             sys.stdout.write("%d%%\r" % dict["percent"])
         elif action == "finish":
-            sys.stdout.write("finished.\n")
+            sys.stdout.write("finished.\r\n")
         elif action == "checking_filesystem":
             sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
         elif action == "filling_with_zeros":
             sys.stdout.write("Zeroing filesystem of %s...\n" % dict["device"])
+        elif action == "iso":
+            sys.stdout.write("Creating ISO %d of %d...\n" % (dict["volume"],
+                                                             dict["total"]))
 
         sys.stdout.flush()
 
