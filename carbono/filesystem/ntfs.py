@@ -25,23 +25,23 @@ class Ntfs(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "ntfsclone --force --save-image -o - %s 2> /dev/null" % self.path
+        cmd = "ntfsclone --force --save-image -o - {0} 2> /dev/null".\
+              format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdout
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdout
         except:
             raise ErrorOpenToRead("Cannot open %s to read" % self.path)
 
     def open_to_write(self):
         """ """
-        cmd = "ntfsclone --force --restore-image --overwrite %s - > /dev/null" % self.path
+        cmd = "ntfsclone --force --restore-image --overwrite {0} - > /dev/null".\
+              format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdin
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdin
         except:
             raise ErrorOpenToWrite("Cannot open %s to write" % self.path)
 
@@ -82,4 +82,7 @@ class Ntfs(Generic):
         return size
 
     def check(self):
-        return not run_command("ntfsresize -P -i -f -v %s" % self.path)
+        """  """
+        self.process = RunCmd("ntfsresize -P -i -f -v {0}".format(self.path))
+        self.process.run()
+        return not self.process.wait()

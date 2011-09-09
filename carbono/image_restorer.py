@@ -34,24 +34,16 @@ from carbono.log import log
 
 class ImageRestorer:
 
-    def __init__(self, image_folder, target_device):
+    def __init__(self, image_folder, target_device, status_callback):
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
+        self.notify_status = status_callback
  
         self.timer = Timer(self.notify_percent)
         self.total_blocks = 0
         self.processed_blocks = 0
         self.current_percent = -1
         self.active = False
-
-    def connect_status_callback(self, callback):
-        """ """
-        self.status_callback = callback
-
-    def notify_status(self, action, dict={}):
-        """Notify interfaces about the current progress"""
-        if hasattr(self, "status_callback"):
-            self.status_callback(action, dict) 
 
     def notify_percent(self):
         percent = (self.processed_blocks/float(self.total_blocks)) * 100
@@ -139,7 +131,7 @@ class ImageRestorer:
                 extract_callback = compressor.extract
 
             self.buffer_manager = BufferManagerFactory(image_reader.read_block,
-                                                  extract_callback)
+                                                       extract_callback)
             self.buffer_manager.start()
 
             buffer = self.buffer_manager.output_buffer

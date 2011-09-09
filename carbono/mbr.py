@@ -40,7 +40,7 @@ class Mbr:
         fdevice.write(data)
         fdevice.close()
         ffile.close()
-        run_command("sfdisk -R %s" % device)
+        run_simple_command("sfdisk -R %s" % device)
         
             
 

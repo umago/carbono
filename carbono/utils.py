@@ -69,7 +69,7 @@ class RunCmd:
                     pass
 
 
-def run_command(cmd):
+def run_simple_command(cmd):
     """  """
     p = subprocess.Popen(cmd, shell=True,
                          stdout=subprocess.PIPE,
@@ -77,10 +77,6 @@ def run_command(cmd):
                          stderr=subprocess.PIPE)
     p.wait()
     return p.returncode
-
-def make_temp_dir():
-    """ """
-    return tempfile.mkdtemp()
 
 def random_string(length=5):
     return ''.join([random.choice(tempfile._RandomNameSequence.characters) for i in range(length)])
@@ -91,6 +87,10 @@ def adjust_path(path):
     if not path[-1] == '/':
         path += '/'
     return path
+
+def make_temp_dir():
+    """ """
+    return adjust_path(tempfile.mkdtemp())
 
 def get_parent_path(path):
     num = -1
@@ -124,4 +124,15 @@ def available_memory(percent=100):
         free = (free * percent) / 100
 
     return free
-    
+
+def get_cdrom_device():
+    device = None
+    with open("/proc/sys/dev/cdrom/info", 'r') as f:
+        for line in f:
+            if line.startswith("drive name:"):
+                try:
+                    device = "/dev/" + line.split()[2]
+                except IndexError:
+                    break
+    return device
+

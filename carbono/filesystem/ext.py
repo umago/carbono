@@ -50,23 +50,21 @@ class Ext(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "partclone.extfs -c -s %s -o -" % self.path
+        cmd = "partclone.extfs -c -s {0} -o -".format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdout
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdout
         except:
             raise ErrorOpenToRead("Cannot open %s to read" % self.path)
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "partclone.extfs -r -o %s -s - " % self.path
+        cmd = "partclone.extfs -r -o {0} -s - ".format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdin
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdin
         except:
             raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
 
@@ -96,7 +94,7 @@ class Ext(Generic):
         self._fd.close()
 
     def check(self):
-        ret = run_command("e2fsck -f -y -v %s" % self.path)
+        ret = run_simple_command("e2fsck -f -y -v %s" % self.path)
         if ret in(0, 1, 2, 256):
             return True
         return False

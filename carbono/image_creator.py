@@ -33,13 +33,15 @@ from carbono.log import log
 
 class ImageCreator:
 
-    def __init__(self, source_device, output_folder, \
-                 image_name="image", compressor_level=6, raw=False, \
-                 split_size=0, create_iso=False, fill_with_zeros=False):
+    def __init__(self, source_device, output_folder,
+                 status_callback, image_name="image", compressor_level=6,
+                 raw=False, split_size=0, create_iso=False,
+                 fill_with_zeros=False):
 
         self.image_name = image_name
         self.device_path = source_device
         self.target_path = adjust_path(output_folder)
+        self.notify_status = status_callback
         self.compressor_level = compressor_level
         self.raw = raw
         self.split_size = split_size
@@ -51,15 +53,6 @@ class ImageCreator:
         self.processed_blocks = 0
         self.current_percent = -1
         self.active = False
-
-    def connect_status_callback(self, callback):
-        """ """
-        self.status_callback = callback
-
-    def notify_status(self, action, dict={}):
-        """Notify interfaces about the current progress"""
-        if hasattr(self, "status_callback"):
-            self.status_callback(action, dict) 
 
     def notify_percent(self):
         percent = (self.processed_blocks/float(self.total_blocks)) * 100
@@ -84,7 +77,8 @@ class ImageCreator:
         # check partitions filesystem
         if not self.raw:
             for part in partition_list:
-                self.notify_status("checking_filesystem", {"device": part.path})
+                self.notify_status("checking_filesystem",
+                                   {"device": part.path})
                 if not part.filesystem.check():
                     log.error("(%s) Filesystem is not clean" % part.path)
                     raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)
@@ -112,9 +106,10 @@ class ImageCreator:
         # TODO: Abstract this whole part, when creating isos,
         # splitting in files, etc...
 
-
         self.timer.start()
-        remaining_size = self.split_size # Used when creating iso
+        remaining_size = self.split_size
+        if self.create_iso:
+            remaining_size -= 300        # TODO: Calc the base size
         slices = dict()                  # Used when creating iso
         iso_volume = 1                   # Used when creating iso
         for part in partition_list:
@@ -197,7 +192,9 @@ class ImageCreator:
 
         if self.create_iso:
             iso_creator = IsoCreator(self.target_path, slices,
-                                     self.notify_status)
+                                     self.image_name,
+                                     self.notify_status,
+                                     device.is_disk())
             iso_creator.run()
 
         self.notify_status("finish")

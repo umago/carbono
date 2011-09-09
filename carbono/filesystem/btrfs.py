@@ -51,23 +51,21 @@ class Btrfs(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "partclone.btrfs -c -s %s -o -" % self.path
+        cmd = "partclone.btrfs -c -s {0} -o -".format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdout
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdout
         except:
             raise ErrorOpenToRead("Cannot open %s to read" % self.path)
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "partclone.btrfs -r -o %s -s - " % self.path
+        cmd = "partclone.btrfs -r -o {0} -s - ".format(self.path)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdin
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdin
         except:
             raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
 
@@ -99,5 +97,5 @@ class Btrfs(Generic):
 
     def check(self):
         """ """
-        return not run_command("btrfsck %s" % self.path)
+        return not run_simple_command("btrfsck %s" % self.path)
 

@@ -84,10 +84,11 @@ class Cli:
 
     def status(self, action, dict={}):
         """ """
+        response = None
         if action == "progress":
             sys.stdout.write("%d%%\r" % dict["percent"])
         elif action == "finish":
-            sys.stdout.write("finished.\r\n")
+            sys.stdout.write("Finished.\r\n")
         elif action == "checking_filesystem":
             sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
         elif action == "filling_with_zeros":
@@ -95,8 +96,15 @@ class Cli:
         elif action == "iso":
             sys.stdout.write("Creating ISO %d of %d...\n" % (dict["volume"],
                                                              dict["total"]))
-
+        elif action == "canceled":
+            sys.stdout.write("%s operation canceled!\n" % dict["operation"])
+        elif action == "cannot_find_files":
+            sys.stdout.write("\nCarbono files cannt be found in %s.\n" \
+                             % dict["device"])
+            response = raw_input("Please type another device " + \
+                                 "(or leave blank to cancel): ")
         sys.stdout.flush()
+        return response
 
     def run(self):
         """ """
@@ -114,16 +122,16 @@ class Cli:
                 else:
                     l = l.upper()
                     if l == 'M':
-                        split_size = int(opt.split_size[:-1]) * 1024 * 1024
+                        split_size = int(opt.split_size[:-1]) << 20
                     elif l == 'G':
-                        split_size = int(opt.split_size[:-1]) * 1024 * 1024 * 1024
+                        split_size = int(opt.split_size[:-1]) << 30
                     else:
                         raise Exception("Cannt determine split size")
 
-            ic = ImageCreator(opt.source_device, opt.output_folder, \
-                              opt.image_name, opt.compressor_level, \
-                              opt.raw, split_size, opt.iso, opt.fill_with_zeros)
-            ic.connect_status_callback(self.status)
+            ic = ImageCreator(opt.source_device, opt.output_folder,
+                              self.status, opt.image_name,
+                              opt.compressor_level, opt.raw, split_size,
+                              opt.iso, opt.fill_with_zeros)
             ic.create_image()
 
         elif opt.target_device:
@@ -131,8 +139,8 @@ class Cli:
                 self.parser.print_help()
                 sys.exit(1)
 
-            ir = ImageRestorer(opt.image_folder, opt.target_device)
-            ir.connect_status_callback(self.status)
+            ir = ImageRestorer(opt.image_folder, opt.target_device,
+                               self.status)
             ir.restore_image()
 
 if __name__ == '__main__':

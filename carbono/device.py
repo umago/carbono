@@ -46,4 +46,4 @@ class Device(parted.Device):
             proc.stdin.write('%s\n' % 'w')
             proc.communicate()
         else:
-            run_command("mkntfs -f %s" % self.path)
+            run_simple_command("mkntfs -f %s" % self.path)

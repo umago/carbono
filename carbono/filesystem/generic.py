@@ -28,6 +28,7 @@ class Generic:
         self.type = type
         self.geometry = geometry
         self._fd = None
+        self.process = None
 
     def get_size(self):
         """ """
@@ -39,23 +40,21 @@ class Generic:
 
     def open_to_read(self):
         """ """
-        cmd = "dd if=%s bs=%s" % (self.path, BLOCK_SIZE)
+        cmd = "dd if={0} bs={1}".format(self.path, BLOCK_SIZE)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdout
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdout
         except:
             raise ErrorOpenToRead("Cannot open %s to read" % self.path)
 
     def open_to_write(self):
         """ """
-        cmd = "dd of=%s bs=%s" % (self.path, BLOCK_SIZE)
+        cmd = "dd of={0} bs={1}".format(self.path, BLOCK_SIZE)
         try:
-            self._fd = subprocess.Popen(cmd, shell=True,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdout=subprocess.PIPE).stdin
+            self.process = RunCmd(cmd)
+            self.process.run()
+            self._fd = self.process.stdin
         except:
             raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
 
@@ -101,7 +100,8 @@ class Generic:
 
     def mount(self):
         tmpd = make_temp_dir()
-        ret = run_command("mount %s %s %s" % (self.MOUNT_OPTIONS, self.path, tmpd))
+        ret = run_simple_command("mount {0} {1} {2}".\
+              format(self.MOUNT_OPTIONS, self.path, tmpd))
         if ret is not 0:
             raise ErrorMountingFilesystem
         return tmpd
@@ -111,15 +111,24 @@ class Generic:
             param = dir
         else:
             param = self.path
-        run_command("sync")
-        ret = run_command("umount %s" % param)
+        run_simple_command("sync")
+        ret = run_simple_command("umount {0}".format(param))
         return ret
 
     def fill_with_zeros(self):
         tmpd = self.mount()
         tmpfile = tmpd + '/' + random_string()
-        run_command("dd if=/dev/zero of=%s bs=%s" % (tmpfile, BLOCK_SIZE))
-        run_command("rm %s" % tmpfile)
+
+        self.process = RunCmd("dd if=/dev/zero of={0} bs={1}".\
+                              format(tmpfile, BLOCK_SIZE))
+        self.process.run()
+        self.process.wait()
+
+        run_simple_command("rm {0}".format(tmpfile))
         self.umount(tmpd)
         return 0
+
+    def stop(self):
+        if self.process is not None:
+            self.process.stop()
         
