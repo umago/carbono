@@ -18,14 +18,18 @@
 import optparse
 import os
 import sys
+from threading import Lock
 
 from carbono.image_restorer import ImageRestorer
 from carbono.image_creator import ImageCreator
+from carbono.information import Information
+from carbono.utils import *
 
 class Cli:
 
     def __init__(self):
         self.parser = optparse.OptionParser()
+        self.lock = Lock()
         self._set_options()
 
     def _set_options(self):
@@ -34,6 +38,8 @@ class Cli:
                                 "Creating Image Options",)
         restore_group = optparse.OptionGroup(self.parser,
                                  "Restoring Image Options",)
+        information_group = optparse.OptionGroup(self.parser,
+                                 "Image Information Options",)
 
         create_group.add_option("-s", "--source-device", 
                                 dest="source_device",)
@@ -48,9 +54,10 @@ class Cli:
                                 type="int",
                                 default=6,
                                 help="An integer from 0 to 9 controlling "
-                                "the level of compression; 0 for no compression, "
-                                "1 is fastest and produces the least compression, "
-                                "9 is slowest and produces the most. "
+                                "the level of compression; 0 for no "
+                                "compression, 1 is fastest and produces "
+                                "the least compression, 9 is slowest and "
+                                "produces the most. "
                                 "[default: %default]",)
         create_group.add_option("-r", "--raw", 
                                 dest="raw", 
@@ -66,44 +73,64 @@ class Cli:
                                 dest="fill_with_zeros", 
                                 action="store_true",
                                 default=False,
-                                help="Fill the filesystem with zeros. Because Raw image "
-                                "copies every block of the filesystem this will aid "
-                                "compression of the image (If compression is enabled).",)
+                                help="Fill the filesystem with zeros. "
+                                "Because Raw image copies every block of "
+                                "the filesystem this will aid compression "
+                                "of the image (If compression is enabled).",)
         create_group.add_option("-p", "--split", 
                                 dest="split_size",
                                 type="string",
-                                help="Split the image file into smaller chunks "
-                                "of required size (in MB).",)
+                                help="Split the image file into smaller "
+                                "chunks of required size.",)
         restore_group.add_option("-t", "--target-device", 
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
                                  dest="image_folder",)
+        information_group.add_option("-q", "--image-information", 
+                                dest="image_folder",
+                                help="Show the information about the image.",)
 
         self.parser.add_option_group(create_group)
         self.parser.add_option_group(restore_group)
+        self.parser.add_option_group(information_group)
 
     def status(self, action, dict={}):
         """ """
+        self.lock.acquire()
         response = None
         if action == "progress":
             sys.stdout.write("%d%%\r" % dict["percent"])
+
         elif action == "finish":
             sys.stdout.write("Finished.\r\n")
+
         elif action == "checking_filesystem":
             sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
+
         elif action == "filling_with_zeros":
             sys.stdout.write("Zeroing filesystem of %s...\n" % dict["device"])
+
         elif action == "iso":
             sys.stdout.write("Creating ISO %d of %d...\n" % (dict["volume"],
                                                              dict["total"]))
+
         elif action == "canceled":
             sys.stdout.write("%s operation canceled!\n" % dict["operation"])
+
         elif action == "cannot_find_files":
             sys.stdout.write("\nCarbono files cannt be found in %s.\n" \
                              % dict["device"])
             response = raw_input("Please type another device " + \
                                  "(or leave blank to cancel): ")
+
+        elif action == "file_not_found":
+            sys.stdout.write("\nThe file %s cannot be found at %s.\n" \
+                             % (dict["file"], dict["path"]))
+            response = raw_input("Type the file location " + \
+                                 "(or leave blank to cancel): ")
+        
         sys.stdout.flush()
+        self.lock.release()
         return response
 
     def run(self):
@@ -134,7 +161,7 @@ class Cli:
                               opt.iso, opt.fill_with_zeros)
             ic.create_image()
 
-        elif opt.target_device:
+        elif opt.target_device is not None:
             if opt.image_folder is None:
                 self.parser.print_help()
                 sys.exit(1)
@@ -142,6 +169,30 @@ class Cli:
             ir = ImageRestorer(opt.image_folder, opt.target_device,
                                self.status)
             ir.restore_image()
+
+        elif opt.image_folder is not None:
+            image_path = adjust_path(opt.image_folder)
+            inf = Information(image_path)
+            inf.load()
+            sys.stdout.write("Name:\t\t\t%s\n" % inf.get_image_name())
+            sys.stdout.write("Is disk:\t\t%s\n" % inf.get_image_is_disk())
+            sys.stdout.write("Compressor level:\t%d\n" %
+                             inf.get_image_compressor_level())
+            sys.stdout.write("Total bytes:\t\t%s\n\n" %
+                             inf.get_image_total_bytes())
+            sys.stdout.write("Partitions:\n")
+            sys.stdout.write("%-10s %-20s %-15s %-36s\n" %
+                            ("Number", "Type", "Size", "UUID"))
+            for part in inf.get_partitions():
+                uuid = ''
+                if hasattr(part, "uuid"):
+                    uuid = part.uuid
+                sys.stdout.write("%-10d %-20s %-15d %-36s\n" % (part.number,
+                                 part.type, part.size, uuid))
+            sys.stdout.flush()
+
+        else:
+            self.parser.print_help()
 
 if __name__ == '__main__':
     cli = Cli()

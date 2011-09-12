@@ -51,3 +51,8 @@ class InvalidCompressorLevel(Exception):
 class ErrorMountingFilesystem(Exception):
     pass
 
+class ImageNotFound(Exception):
+    pass
+
+class CommandNotFound(Exception):
+    pass

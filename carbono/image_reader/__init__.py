@@ -20,11 +20,14 @@ from carbono.image_reader.compressed import CompressedReader
 
 class ImageReaderFactory:
 
-    def __init__(self, pattern, volumes, compressor_level):
+    def __init__(self, image_path, pattern, volumes,
+                 compressor_level, notify_status):
         if compressor_level:
-            self._reader = CompressedReader(pattern, volumes, compressor_level)
+            self._reader = CompressedReader(image_path, pattern, volumes,
+                                            compressor_level, notify_status)
         else:
-            self._reader = GenericReader(pattern, volumes)
+            self._reader = GenericReader(image_path, pattern,
+                                         volumes, notify_status)
 
     def read_block(self):
         return self._reader.read_block()

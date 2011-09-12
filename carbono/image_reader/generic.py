@@ -15,14 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from carbono.config import *
+from carbono.utils import *
 
 class GenericReader:
 
-    def __init__(self, pattern, volumes):
+    def __init__(self, image_path, pattern, volumes, notify_status):
+        self.image_path = image_path
         self.pattern = pattern
         self.volumes = volumes
         self.current_volume = 1
+        self.notify_callback = notify_status
         self._fd = None
         self.open()
 
@@ -31,8 +36,25 @@ class GenericReader:
 
     def open(self):
         if self._check_fd():
-            file_path = self.pattern.format(volume=self.current_volume)
-            self._fd = open(file_path, 'rb')
+            file_pattern = self.pattern.format(volume=self.current_volume)
+
+            # Loop untill find the the next slice or
+            # cancel the operation
+            while True:
+                file_path = self.image_path + file_pattern
+                if os.path.exists(file_path):
+                    self._fd = open(file_path, 'rb')
+                else:
+                    self.image_path = self.notify_callback("file_not_found",
+                    {"path": self.image_path, "file": file_pattern})
+
+                    if self.image_path:
+                        self.image_path = adjust_path(self.image_path)
+                        continue
+                    else:
+                        self.notify_callback("canceled",
+                                            {"operation": "Restoring image"})
+                break
 
     def close(self):
         if not self._check_fd():

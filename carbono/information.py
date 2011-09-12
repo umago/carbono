@@ -16,8 +16,10 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import json
+import errno
 
 from carbono.utils import *
+from carbono.exception import *
 
 class Information:
 
@@ -42,11 +44,12 @@ class Information:
         """ """
         self._doc.update({"is_disk": is_disk})
 
-    def add_partition(self, number, uuid, type, volumes):
+    def add_partition(self, number, uuid, type, volumes, size):
         """ """
         part_dict = dict()
         part_dict.update({"number": number,
-                          "type": type})
+                          "type": type,
+                          "size": size})
 
         if uuid is not None:
             part_dict.update({"uuid": uuid})
@@ -90,6 +93,10 @@ class Information:
             json.dump(self._doc, f, indent=4)
 
     def load(self):
-        with open(self.file_path, 'r') as f:
-            self._doc = json.load(f)
+        try:
+            with open(self.file_path, 'r') as f:
+                self._doc = json.load(f)
+        except IOError, e:
+            if e.errno == errno.ENOENT:
+                raise ImageNotFound("Image not found")
 

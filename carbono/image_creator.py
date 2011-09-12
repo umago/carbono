@@ -174,7 +174,8 @@ class ImageCreator:
 
             self.buffer_manager.join()
             part.filesystem.close()
-            information.add_partition(number, uuid, type, volumes)
+            information.add_partition(number, uuid, type, volumes,
+                                      part.filesystem.get_used_size())
 
         # We dont need to save the data of the swap partition
         # we just copy the informations and re-create when
@@ -185,7 +186,7 @@ class ImageCreator:
             number = swap.get_number()
             uuid = swap.filesystem.uuid()
             type = swap.filesystem.type
-            information.add_partition(number, uuid, type, 0)
+            information.add_partition(number, uuid, type, 0, 0)
 
         information.save()
         self.stop()

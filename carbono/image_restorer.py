@@ -91,7 +91,8 @@ class ImageRestorer:
             if not self.active: break
             
             if information.get_image_is_disk():
-                partition = disk.get_partition_by_number(part.number, part.type)
+                partition = disk.get_partition_by_number(part.number,
+                                                         part.type)
             else:
                 parent_path = get_parent_path(self.target_device)
                 parent_device = Device(parent_path)
@@ -116,14 +117,13 @@ class ImageRestorer:
             pattern = FILE_PATTERN.format(name=image_name,
                                           partition=part.number,
                                           volume="{volume}")
-            pattern = self.image_path + pattern
-
             volumes = 1
             if hasattr(part, "volumes"):
                 volumes = part.volumes
 
-            image_reader = ImageReaderFactory(pattern, volumes,
-                                              compressor_level)
+            image_reader = ImageReaderFactory(self.image_path, pattern,
+                                              volumes, compressor_level,
+                                              self.notify_status)
 
             extract_callback = None
             if compressor_level:
