@@ -20,6 +20,7 @@ import tempfile
 import multiprocessing
 import random
 import errno
+import os
 
 from threading import Thread, Event
 from os.path import realpath

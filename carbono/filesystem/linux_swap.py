@@ -28,7 +28,9 @@ class LinuxSwap(Generic):
         if uuid is not None:
             param = "-U %s" % uuid
 
-        ret = run_simple_command("mkswap %s %s" % (param, self.path))
+        ret = run_simple_command("{0} {1} {2}".\
+                                format(which("mkswap"),
+                                param, self.path))
         return ret
 
     def open_to_write(self, uuid=None):

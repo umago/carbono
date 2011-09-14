@@ -26,7 +26,7 @@ class Ext(Generic):
 
     def get_used_size(self):
         """  """
-        p = subprocess.Popen("dumpe2fs -h %s" % self.path,
+        p = subprocess.Popen("{0} -h {1}".format(which("dumpe2fs"), self.path),
                              shell=True,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -50,7 +50,7 @@ class Ext(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "partclone.extfs -c -s {0} -o -".format(self.path)
+        cmd = "{0} -c -s {1} -o -".format(which("partclone.extfs"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
@@ -60,7 +60,7 @@ class Ext(Generic):
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "partclone.extfs -r -o {0} -s - ".format(self.path)
+        cmd = "{0} -r -o {1} -s - ".format(which("partclone.extfs"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()

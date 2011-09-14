@@ -34,11 +34,13 @@ from carbono.log import log
 
 class ImageRestorer:
 
-    def __init__(self, image_folder, target_device, status_callback):
+    def __init__(self, image_folder, target_device, status_callback,
+                 partitions=None):
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
         self.notify_status = status_callback
- 
+        self.partitions = partitions
+
         self.timer = Timer(self.notify_percent)
         self.total_blocks = 0
         self.processed_blocks = 0
@@ -56,6 +58,8 @@ class ImageRestorer:
         self.active = True
         information = Information(self.image_path)
         information.load()
+        if self.partitions:
+            information.set_partitions(self.partitions)
         image_name = information.get_image_name()
         compressor_level = information.get_image_compressor_level()
         total_bytes = information.get_image_total_bytes()

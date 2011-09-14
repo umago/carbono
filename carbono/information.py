@@ -28,6 +28,22 @@ class Information:
         self.target_path = adjust_path(target_path)
         self.file_path = self.target_path + "image.info"
 
+    def set_partitions(self, plist):
+        """ """
+        img_parts = map(lambda x: x["number"], self._doc["partitions"])
+        not_found = filter(lambda x: x not in img_parts, plist)
+
+        # Check availability
+        if not_found:
+            parts = ' '.join(map(lambda x: str(x), not_found))
+            raise PartitionNotFound("Partition(s) {0} not found".\
+                                    format(not_found))
+
+        self._partitions = list()
+        for part in self._doc["partitions"]:
+            if part["number"] in plist:
+                self._partitions.append(part)
+
     def set_image_name(self, name):
         """ """
         self._doc.update({"name": name})
@@ -79,7 +95,11 @@ class Information:
 
     def get_partitions(self):
         """ """
-        partitions = self._doc["partitions"]
+        if hasattr(self,"_partitions"):
+            partitions = self._partitions
+        else:
+            partitions = self._doc["partitions"]
+
         parts = list()
         for part in partitions:
             partition = type("Partition",

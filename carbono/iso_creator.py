@@ -141,12 +141,13 @@ class IsoCreator:
                 "-boot-load-size 4 -boot-info-table"
 
             slist = ' '.join(self.slices[volume])
-            cmd = "mkisofs -R -J -o {0}{1}{2}.iso {3} {4}".format(
-                                                           self.target_path,
-                                                           self.name,
-                                                           volume,
-                                                           extra_params,
-                                                           slist)
+            cmd = "{0} -R -J -o {1}{2}{3}.iso {4} {5}".format(
+                                                       which("mkisofs"),
+                                                       self.target_path,
+                                                       self.name,
+                                                       volume,
+                                                       extra_params,
+                                                       slist)
 
             self.process = RunCmd(cmd)
             self.process.run()

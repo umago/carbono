@@ -86,6 +86,11 @@ class Cli:
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
                                  dest="image_folder",)
+        restore_group.add_option("-e", "--image-partitions", 
+                                dest="partition_numbers",
+                                help="Restore only the given "
+                                "partition number(s) (Comma separated). "
+                                "[Ex: 1,2,3]",)
         information_group.add_option("-q", "--image-information", 
                                 dest="image_folder",
                                 help="Show the information about the image.",)
@@ -166,8 +171,17 @@ class Cli:
                 self.parser.print_help()
                 sys.exit(1)
 
+            partitions = None
+            if opt.partition_numbers is not None:
+                if not opt.partition_numbers.find(','):
+                    partitions = list()
+                    partitions.append(int(opt.partition_numbers))
+                else:
+                    plist = opt.partition_numbers.split(',')
+                    partitions = map(lambda x: int(x), plist)
+
             ir = ImageRestorer(opt.image_folder, opt.target_device,
-                               self.status)
+                               self.status, partitions)
             ir.restore_image()
 
         elif opt.image_folder is not None:

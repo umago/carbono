@@ -25,7 +25,7 @@ class Btrfs(Generic):
 
     def get_used_size(self):
         """  """
-        p = subprocess.Popen("btrfs-show %s" % self.path,
+        p = subprocess.Popen("{0} {1}".format(which("btrfs-show"), self.path),
                              shell=True,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -51,7 +51,8 @@ class Btrfs(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "partclone.btrfs -c -s {0} -o -".format(self.path)
+        cmd = "{0} -c -s {1} -o -".format(which("partclone.btrfs"),
+                                          self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
@@ -61,7 +62,8 @@ class Btrfs(Generic):
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "partclone.btrfs -r -o {0} -s - ".format(self.path)
+        cmd = "{0} -r -o {1} -s - ".format(which("partclone.btrfs"),
+                                           self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
@@ -71,7 +73,7 @@ class Btrfs(Generic):
 
     def uuid(self):
         """ """
-        p = subprocess.Popen("btrfs-show %s" % self.path,
+        p = subprocess.Popen("{0} {1}".format(which("btrfs-show"), self.path),
                              shell=True,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -97,5 +99,5 @@ class Btrfs(Generic):
 
     def check(self):
         """ """
-        return not run_simple_command("btrfsck %s" % self.path)
+        return not run_simple_command("{0} {1}".format(which("btrfsck"), self.path))
 

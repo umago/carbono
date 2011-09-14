@@ -25,8 +25,8 @@ class Ntfs(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "ntfsclone --force --save-image -o - {0} 2> /dev/null".\
-              format(self.path)
+        cmd = "{0} --force --save-image -o - {1} 2> /dev/null".\
+              format(which("ntfsclone"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
@@ -36,8 +36,8 @@ class Ntfs(Generic):
 
     def open_to_write(self):
         """ """
-        cmd = "ntfsclone --force --restore-image --overwrite {0} - > /dev/null".\
-              format(self.path)
+        cmd = "{0} --force --restore-image --overwrite {1} - > /dev/null".\
+              format(which("ntfsclone"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
@@ -47,7 +47,8 @@ class Ntfs(Generic):
 
     def get_size(self):
         """ """
-        proc = subprocess.Popen(["ntfsresize", "-i" , self.path, "-f"], stdout=subprocess.PIPE)
+        proc = subprocess.Popen("{0} -i {1} -f".format(which("ntfsresize"), self.path),
+                                shell=True, stdout=subprocess.PIPE)
         lines = proc.stdout.readlines()
 
         size = None
@@ -65,7 +66,8 @@ class Ntfs(Generic):
             
     def get_used_size(self):
         """ """
-        proc = subprocess.Popen(["ntfsresize", "-i" , self.path, "-f"], stdout=subprocess.PIPE)
+        proc = subprocess.Popen("{0} -i {1} -f".format(which("ntfsresize"), self.path),
+                                shell=True, stdout=subprocess.PIPE)
         lines = proc.stdout.readlines()
 
         size = None
@@ -83,6 +85,7 @@ class Ntfs(Generic):
 
     def check(self):
         """  """
-        self.process = RunCmd("ntfsresize -P -i -f -v {0}".format(self.path))
+        self.process = RunCmd("{0} -P -i -f -v {1}".\
+                       format(which("ntfsresize"), self.path))
         self.process.run()
         return not self.process.wait()

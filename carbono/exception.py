@@ -56,3 +56,6 @@ class ImageNotFound(Exception):
 
 class CommandNotFound(Exception):
     pass
+
+class PartitionNotFound(Exception):
+    pass
