@@ -89,3 +89,10 @@ class Ntfs(Generic):
                        format(which("ntfsresize"), self.path))
         self.process.run()
         return not self.process.wait()
+
+    def resize(self):
+        if self.check():
+            ret = run_simple_command("ntfsresize -f {0}".format(self.path))
+            if ret == 0:
+                return True
+        return False

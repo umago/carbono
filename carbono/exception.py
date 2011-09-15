@@ -59,3 +59,6 @@ class CommandNotFound(Exception):
 
 class PartitionNotFound(Exception):
     pass
+
+class ExpandingPartitionError(Exception):
+    pass

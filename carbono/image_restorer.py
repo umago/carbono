@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import math
+import parted
 import _ped
 
 from carbono.device import Device
@@ -35,11 +36,12 @@ from carbono.log import log
 class ImageRestorer:
 
     def __init__(self, image_folder, target_device, status_callback,
-                 partitions=None):
+                 partitions=None, expand=False):
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
         self.notify_status = status_callback
         self.partitions = partitions
+        self.expand = expand
 
         self.timer = Timer(self.notify_percent)
         self.total_blocks = 0
@@ -48,10 +50,13 @@ class ImageRestorer:
         self.active = False
 
     def notify_percent(self):
-        percent = (self.processed_blocks/float(self.total_blocks)) * 100
-        if self.current_percent != percent:
-            self.current_percent = percent
-            self.notify_status("progress", {"percent": self.current_percent})
+        # Total blocks can be 0 when restoring only a swap partition
+        # for example
+        if self.total_blocks > 0:
+            percent = (self.processed_blocks/float(self.total_blocks)) * 100
+            if self.current_percent != percent:
+                self.current_percent = percent
+                self.notify_status("progress", {"percent": self.current_percent})
 
     def restore_image(self):
         """ """
@@ -62,7 +67,13 @@ class ImageRestorer:
             information.set_partitions(self.partitions)
         image_name = information.get_image_name()
         compressor_level = information.get_image_compressor_level()
-        total_bytes = information.get_image_total_bytes()
+        partitions = information.get_partitions()
+
+        # Get total size
+        total_bytes = 0
+        for part in partitions:
+            total_bytes += part.size
+
         self.total_blocks = long(math.ceil(total_bytes/float(BLOCK_SIZE)))
 
         device = Device(self.target_device)
@@ -87,10 +98,9 @@ class ImageRestorer:
             mbr = Mbr(self.image_path)
             mbr.restore_from_file(self.target_device)
             dlm = DiskLayoutManager(self.image_path)
-            dlm.restore_from_file(disk)
+            dlm.restore_from_file(disk, self.expand)
 
         self.timer.start()
-        partitions = information.get_partitions()
         for part in partitions:
             if not self.active: break
             
@@ -150,11 +160,26 @@ class ImageRestorer:
             partition.filesystem.close()
 
         self.stop()
+
+        if self.expand:
+            if information.get_image_is_disk():
+                part = partitions[-1] # Last Partition
+
+                partition = disk.get_partition_by_number(part.number,
+                                                         part.type)
+
+                if partition.type == parted.PARTITION_NORMAL:
+                    self.notify_status("expand", {"device":
+                                                  partition.path})
+                    partition.filesystem.resize()
+
         self.notify_status("finish")
         log.info("Restoration finished")
 
     def stop(self):
-        if self.active:
+        # When restoring only a swap partition, buffer_manager
+        # isnt necessary
+        if self.active and hasattr(self, "buffer_manager"):
             self.buffer_manager.stop()
         self.active = False
         self.timer.stop()        

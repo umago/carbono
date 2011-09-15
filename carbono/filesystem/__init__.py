@@ -90,5 +90,8 @@ class FilesystemFactory:
     def fill_with_zeros(self):
         return self._fs.fill_with_zeros()
 
+    def resize(self):
+        return self._fs.resize()
+
     def stop(self):
         self._fs.stop()

@@ -94,8 +94,14 @@ class Ext(Generic):
         self._fd.close()
 
     def check(self):
-        ret = run_simple_command("e2fsck -f -y -v %s" % self.path)
-        if ret in(0, 1, 2, 256):
+        ret = run_simple_command("e2fsck -f -y -v {0}".format(self.path))
+        if ret in (0, 1, 2, 256):
             return True
         return False
 
+    def resize(self):
+        if self.check():
+            ret = run_simple_command("resize2fs {0}".format(self.path))
+            if ret == 0:
+                return True
+        return False

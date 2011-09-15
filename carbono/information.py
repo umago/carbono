@@ -52,10 +52,6 @@ class Information:
         """ """
         self._doc.update({"compressor_level": level})
 
-    def set_image_total_bytes(self, total_bytes):
-        """ """
-        self._doc.update({"total_bytes": total_bytes})
-
     def set_image_is_disk(self, is_disk):
         """ """
         self._doc.update({"is_disk": is_disk})
@@ -84,10 +80,6 @@ class Information:
     def get_image_compressor_level(self):
         """ """
         return self._doc["compressor_level"]
-
-    def get_image_total_bytes(self):
-        """ """
-        return self._doc["total_bytes"]
 
     def get_image_is_disk(self):
         """ """

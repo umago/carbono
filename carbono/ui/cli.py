@@ -28,9 +28,20 @@ from carbono.utils import *
 class Cli:
 
     def __init__(self):
-        self.parser = optparse.OptionParser()
+        self.parser = optparse.OptionParser(usage=self.usage())
         self.lock = Lock()
         self._set_options()
+
+    def usage(self):
+        usage = "usage: %prog [options]\n"
+        usage += "\nCreating: \n"
+        usage += "\t%prog -s /dev/sda -o /media/external_hd\n"
+        usage += "\t%prog -s /dev/sda1 -o /media/external_hd -r -z -c 0\n"
+        usage += "\t%prog -s /dev/sda -o /media/external_hd -p 4G -m\n"
+        usage += "\nRestoring: \n"
+        usage += "\t%prog -t /dev/sda -i /media/external_hd\n"
+        usage += "\t%prog -t /dev/sda -i /media/external_hd -x 1,3 -e\n"
+        return usage
 
     def _set_options(self):
         """ """
@@ -86,11 +97,19 @@ class Cli:
                                  dest="target_device",)
         restore_group.add_option("-i", "--image-folder", 
                                  dest="image_folder",)
-        restore_group.add_option("-e", "--image-partitions", 
+        restore_group.add_option("-x", "--image-partitions", 
                                 dest="partition_numbers",
                                 help="Restore only the given "
                                 "partition number(s) (Comma separated). "
+                                "ONLY FOR DISK RECOVERIES. "
                                 "[Ex: 1,2,3]",)
+        restore_group.add_option("-e", "--expand", 
+                                dest="expand", 
+                                action="store_true",
+                                default=False,
+                                help="If possible resize the (last) partition "
+                                "until it fills the whole disk. "
+                                "ONLY FOR DISK RECOVERIES.",)
         information_group.add_option("-q", "--image-information", 
                                 dest="image_folder",
                                 help="Show the information about the image.",)
@@ -111,6 +130,9 @@ class Cli:
 
         elif action == "checking_filesystem":
             sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
+
+        elif action == "expand":
+            sys.stdout.write("Expanding filesystem of %s...\n" % dict["device"])
 
         elif action == "filling_with_zeros":
             sys.stdout.write("Zeroing filesystem of %s...\n" % dict["device"])
@@ -150,15 +172,20 @@ class Cli:
             if opt.split_size:
                 l = opt.split_size[-1]
                 if l.isdigit():
-                    split_size = int(opt.split_size)
+                    split_size = float(opt.split_size)
                 else:
+                    try:
+                        split_size = float(opt.split_size[:-1])
+                    except ValueError:
+                        raise Exception("Invalid split size")
+
                     l = l.upper()
                     if l == 'M':
-                        split_size = int(opt.split_size[:-1]) << 20
+                        split_size = int(split_size *1024**2)
                     elif l == 'G':
-                        split_size = int(opt.split_size[:-1]) << 30
+                        split_size = int(split_size *1024**3)
                     else:
-                        raise Exception("Cannt determine split size")
+                        raise Exception("Cannot determine split size")
 
             ic = ImageCreator(opt.source_device, opt.output_folder,
                               self.status, opt.image_name,
@@ -181,7 +208,7 @@ class Cli:
                     partitions = map(lambda x: int(x), plist)
 
             ir = ImageRestorer(opt.image_folder, opt.target_device,
-                               self.status, partitions)
+                               self.status, partitions, opt.expand)
             ir.restore_image()
 
         elif opt.image_folder is not None:
@@ -190,10 +217,8 @@ class Cli:
             inf.load()
             sys.stdout.write("Name:\t\t\t%s\n" % inf.get_image_name())
             sys.stdout.write("Is disk:\t\t%s\n" % inf.get_image_is_disk())
-            sys.stdout.write("Compressor level:\t%d\n" %
+            sys.stdout.write("Compressor level:\t%d\n\n" %
                              inf.get_image_compressor_level())
-            sys.stdout.write("Total bytes:\t\t%s\n\n" %
-                             inf.get_image_total_bytes())
             sys.stdout.write("Partitions:\n")
             sys.stdout.write("%-10s %-20s %-15s %-36s\n" %
                             ("Number", "Type", "Size", "UUID"))

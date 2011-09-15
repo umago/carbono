@@ -66,7 +66,7 @@ class DiskLayoutManager:
             while not os.path.exists(p.path):
                 time.sleep(1)
 
-    def restore_from_file(self, disk):
+    def restore_from_file(self, disk, expand=False):
         """ """
         with open(self.file_path, 'r') as f:
             layout = list()
@@ -87,14 +87,35 @@ class DiskLayoutManager:
                                                        geometry=geometry,
                                                        fs=p_fs)
 
+
+
                 if p.flags != "swap" and p.flags != '':
                     partition.setFlag(partition_flag_get_by_name(p.flags))
                 layout.append(partition)
 
             disk.deleteAllPartitions()
             constraint = parted.Constraint(device=disk.device)
-            for p in layout:
+            last_partition = len(layout)
+            for n, p in enumerate(layout, 1):
                 disk.addPartition(p, constraint)
+
+                # Expand last partition
+                if last_partition == n:
+                    if expand:
+                        if p.type == parted.PARTITION_NORMAL:
+                            max_geometry = disk.calculateMaxPartitionGeometry(
+                                           p, constraint)
+                            new_geometry = parted.Geometry(geometry.device,
+                                                          start=geometry.start,
+                                                          end=max_geometry.end)
+ 
+                            result = disk.setPartitionGeometry(p,
+                                                       constraint,
+                                                       new_geometry.start,
+                                                       new_geometry.end)
+                            if not result:
+                                raise ExpandingPartitionError("Extending" + \
+                                                          "partition failed.")
 
             disk.commitToDevice()
             disk.commitToOS()

@@ -100,7 +100,6 @@ class ImageCreator:
         information = Information(self.target_path)
         information.set_image_is_disk(device.is_disk())
         information.set_image_name(self.image_name)
-        information.set_image_total_bytes(total_bytes)
         information.set_image_compressor_level(self.compressor_level)
 
         # TODO: Abstract this whole part, when creating isos,
