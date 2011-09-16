@@ -17,6 +17,7 @@
 
 import optparse
 import os
+import errno
 import sys
 from threading import Lock
 
@@ -209,7 +210,11 @@ class Cli:
 
             ir = ImageRestorer(opt.image_folder, opt.target_device,
                                self.status, partitions, opt.expand)
-            ir.restore_image()
+            try:
+                ir.restore_image()
+            except OSError, e:
+                if e.errno == errno.ECHILD:
+                    pass
 
         elif opt.image_folder is not None:
             image_path = adjust_path(opt.image_folder)

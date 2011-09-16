@@ -155,3 +155,13 @@ def which(program):
 
     raise CommandNotFound("{0}: command not found".\
                           format(program))
+
+def sync():
+    run_simple_command("sync")
+
+def is_mounted(device):
+    with open("/etc/mtab", 'r') as f:
+        for line in f:
+            if line.find(device) > -1:
+                return True
+    return False

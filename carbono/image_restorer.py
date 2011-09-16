@@ -16,8 +16,8 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import math
-import parted
 import _ped
+from parted import PARTITION_NORMAL
 
 from carbono.device import Device
 from carbono.disk import Disk
@@ -35,8 +35,9 @@ from carbono.log import log
 
 class ImageRestorer:
 
-    def __init__(self, image_folder, target_device, status_callback,
-                 partitions=None, expand=False):
+    def __init__(self, image_folder, target_device,
+                 status_callback, partitions=None,
+                 expand=False):
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
         self.notify_status = status_callback
@@ -56,10 +57,14 @@ class ImageRestorer:
             percent = (self.processed_blocks/float(self.total_blocks)) * 100
             if self.current_percent != percent:
                 self.current_percent = percent
-                self.notify_status("progress", {"percent": self.current_percent})
+                self.notify_status("progress", {"percent":
+                                    self.current_percent})
 
     def restore_image(self):
         """ """
+        if is_mounted(self.target_device):
+            raise DeviceIsMounted("Please umount first")
+
         self.active = True
         information = Information(self.image_path)
         information.load()
@@ -115,7 +120,7 @@ class ImageRestorer:
                                             self.target_device,
                                             part.type)
 
-            log.info("Restoring partition %s" % partition.path)
+            log.info("Restoring partition {0}".format(partition.get_path()))
 
             if partition is None:
                 raise ErrorRestoringImage("No valid partitions found")
@@ -159,22 +164,28 @@ class ImageRestorer:
             self.buffer_manager.join()
             partition.filesystem.close()
 
-        self.stop()
+        self.timer.stop()
 
         if self.expand:
             if information.get_image_is_disk():
-                part = partitions[-1] # Last Partition
+                self.expand_last_partition()
 
-                partition = disk.get_partition_by_number(part.number,
-                                                         part.type)
-
-                if partition.type == parted.PARTITION_NORMAL:
-                    self.notify_status("expand", {"device":
-                                                  partition.path})
-                    partition.filesystem.resize()
-
+        self.stop()
         self.notify_status("finish")
         log.info("Restoration finished")
+
+    def expand_last_partition(self):
+        # After all data is copied to the disk
+        # we instance class again to reload
+        sync()
+        device = Device(self.target_device)
+        disk = Disk(device)
+        partition = disk.get_last_partition()
+        if partition is not None:
+            if partition.type == PARTITION_NORMAL:
+                self.notify_status("expand", {"device":
+                                   partition.get_path()})
+                partition.filesystem.resize()
 
     def stop(self):
         # When restoring only a swap partition, buffer_manager
@@ -182,5 +193,5 @@ class ImageRestorer:
         if self.active and hasattr(self, "buffer_manager"):
             self.buffer_manager.stop()
         self.active = False
-        self.timer.stop()        
+        self.timer.stop()
 

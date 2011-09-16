@@ -62,3 +62,7 @@ class PartitionNotFound(Exception):
 
 class ExpandingPartitionError(Exception):
     pass
+
+class DeviceIsMounted(Exception):
+    pass
+

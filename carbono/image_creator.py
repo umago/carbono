@@ -62,6 +62,9 @@ class ImageCreator:
 
     def create_image(self):
         """ """
+        if is_mounted(self.device_path):
+            raise DeviceIsMounted("Please umount first")
+
         self.active = True
         device = Device(self.device_path)
         disk = Disk(device)
@@ -78,16 +81,19 @@ class ImageCreator:
         if not self.raw:
             for part in partition_list:
                 self.notify_status("checking_filesystem",
-                                   {"device": part.path})
+                                   {"device": part.get_path()})
                 if not part.filesystem.check():
-                    log.error("(%s) Filesystem is not clean" % part.path)
-                    raise ErrorCreatingImage("(%s) Filesystem is not clean" % part.path)
+                    log.error("{0} Filesystem is not clean".\
+                              format(part.get_path()))
+                    raise ErrorCreatingImage("{0} Filesystem is not clean".\
+                                             format(part.get_path()))
 
         # fill partitions with zeroes
         if self.raw and self.fill_with_zeros:
             for part in partition_list:
-                log.info("(%s) Filling with zeros" % part.path)
-                self.notify_status("filling_with_zeros", {"device": part.path})
+                log.info("{0} Filling with zeros".format(part.get_path()))
+                self.notify_status("filling_with_zeros", {"device":
+                                                          part.get_path()})
                 part.filesystem.fill_with_zeros()
 
         # get total size
@@ -114,7 +120,7 @@ class ImageCreator:
         for part in partition_list:
             if not self.active: break
 
-            log.info("Creating image of %s" % part.path)
+            log.info("Creating image of {0}".format(part.get_path()))
             number = part.get_number()
             uuid = part.filesystem.uuid()
             type = part.filesystem.type
@@ -126,7 +132,8 @@ class ImageCreator:
                 compressor = Compressor(self.compressor_level)
                 compact_callback = compressor.compact
 
-            self.buffer_manager = BufferManagerFactory(part.filesystem.read_block,
+            self.buffer_manager = BufferManagerFactory(
+                                                  part.filesystem.read_block,
                                                   compact_callback)
             self.buffer_manager.start()
 
@@ -181,7 +188,7 @@ class ImageCreator:
         # restoring
         swap = disk.get_swap_partition()
         if swap is not None:
-            log.info("Swap path %s" % swap.path)
+            log.info("Swap path {0}".format(swap.get_path()))
             number = swap.get_number()
             uuid = swap.filesystem.uuid()
             type = swap.filesystem.type

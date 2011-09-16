@@ -43,7 +43,9 @@ class Ext(Generic):
                 block_size = int(l.split()[2])
 
         sectors_unused = free_blocks * (block_size/float(512))
-        sectors_unused = (self.geometry.end - self.geometry.start + 1) - sectors_unused
+        sectors_unused = (self.geometry.end - \
+                          self.geometry.start + 1) - \
+                          sectors_unused
         bytes = long(sectors_unused * 512)
 
         return bytes
@@ -94,14 +96,16 @@ class Ext(Generic):
         self._fd.close()
 
     def check(self):
-        ret = run_simple_command("e2fsck -f -y -v {0}".format(self.path))
+        ret = run_simple_command("{0} -f -y -v {1}".format(which("e2fsck"),
+                                                           self.path))
         if ret in (0, 1, 2, 256):
             return True
         return False
 
     def resize(self):
         if self.check():
-            ret = run_simple_command("resize2fs {0}".format(self.path))
+            ret = run_simple_command("{0} {1}".format(which("resize2fs"),
+                                                      self.path))
             if ret == 0:
                 return True
         return False

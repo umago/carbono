@@ -24,6 +24,7 @@ class Partition(parted.Partition):
     def __init__(self, disk, fs, type, geometry, path, number):
         parted.Partition.__init__(self, disk, type, fs, geometry)
         self._number = number
+        self._path = path
         if fs is None: # treat as generic
             fs_type = "generic"
         else:
@@ -36,3 +37,7 @@ class Partition(parted.Partition):
     def get_number(self):
         """ """
         return self._number
+
+    def get_path(self):
+        """ """
+        return self._path

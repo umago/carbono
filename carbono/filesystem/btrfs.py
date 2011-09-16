@@ -101,3 +101,16 @@ class Btrfs(Generic):
         """ """
         return not run_simple_command("{0} {1}".format(which("btrfsck"), self.path))
 
+    def resize(self):
+        """ """
+        if self.check():
+            try:
+                mount_point = self.mount()
+            except ErrorMountingFilesystem:
+                return False
+            ret = run_simple_command("{0} -r max {1}".format(which("btrfsctl"), 
+                                                             mount_point))
+            self.umount(mount_point)
+            if ret == 0:
+                return True
+        return False

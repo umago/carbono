@@ -84,6 +84,19 @@ class Disk(parted.Disk):
 
         return plist
 
+    def get_last_partition(self, force_generic=False):
+        """ """
+        try:
+            part = self.partitions[-1]
+        except IndexError:
+            return None
+
+        if force_generic:
+            part.fileSystem = None
+
+        partition = self._instance_partition(part)
+        return partition
+
     def get_swap_partition(self):
         """ """
         for p in self.partitions:

@@ -81,6 +81,7 @@ class Generic:
             return
 
         self._fd.close()
+        sync()
 
     def uuid(self):
         """  """
@@ -111,8 +112,8 @@ class Generic:
             param = dir
         else:
             param = self.path
-        run_simple_command("sync")
         ret = run_simple_command("umount {0}".format(param))
+        sync()
         return ret
 
     def fill_with_zeros(self):
@@ -134,3 +135,4 @@ class Generic:
  
     def resize(self):
         return True
+
