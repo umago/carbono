@@ -130,20 +130,24 @@ class Cli:
             sys.stdout.write("Finished.\r\n")
 
         elif action == "checking_filesystem":
-            sys.stdout.write("Checking filesystem of %s...\n" % dict["device"])
+            sys.stdout.write("Checking filesystem of %s...\n" %
+                             dict["device"])
 
         elif action == "expand":
-            sys.stdout.write("Expanding filesystem of %s...\n" % dict["device"])
+            sys.stdout.write("Expanding filesystem of %s...\n" %
+                             dict["device"])
 
         elif action == "filling_with_zeros":
-            sys.stdout.write("Zeroing filesystem of %s...\n" % dict["device"])
+            sys.stdout.write("Zeroing filesystem of %s...\n" %
+                             dict["device"])
 
         elif action == "iso":
-            sys.stdout.write("Creating ISO %d of %d...\n" % (dict["volume"],
-                                                             dict["total"]))
+            sys.stdout.write("Creating ISO %d of %d...\n" %
+                            (dict["volume"], dict["total"]))
 
         elif action == "canceled":
-            sys.stdout.write("%s operation canceled!\n" % dict["operation"])
+            sys.stdout.write("%s operation canceled!\n" % 
+                             dict["operation"])
 
         elif action == "cannot_find_files":
             sys.stdout.write("\nCarbono files cannt be found in %s.\n" \
@@ -167,6 +171,10 @@ class Cli:
         if opt.source_device is not None:
             if opt.output_folder is None:
                 self.parser.print_help()
+                sys.exit(1)
+
+            if not check_if_root():
+                sys.stderr.write("You need to run this option as root.\n")
                 sys.exit(1)
 
             split_size = 0
@@ -197,6 +205,10 @@ class Cli:
         elif opt.target_device is not None:
             if opt.image_folder is None:
                 self.parser.print_help()
+                sys.exit(1)
+
+            if not check_if_root():
+                sys.stderr.write("You need to run this option as root.\n")
                 sys.exit(1)
 
             partitions = None

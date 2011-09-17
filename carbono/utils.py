@@ -82,7 +82,8 @@ def run_simple_command(cmd):
     return p.returncode
 
 def random_string(length=5):
-    return ''.join([random.choice(tempfile._RandomNameSequence.characters) for i in range(length)])
+    return ''.join([random.choice(tempfile._RandomNameSequence.characters) \
+                   for i in range(length)])
 
 def adjust_path(path):
     """ """
@@ -164,4 +165,9 @@ def is_mounted(device):
         for line in f:
             if line.find(device) > -1:
                 return True
+    return False
+
+def check_if_root():
+    if os.getuid() == 0:
+        return True
     return False

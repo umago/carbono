@@ -38,6 +38,10 @@ class ImageRestorer:
     def __init__(self, image_folder, target_device,
                  status_callback, partitions=None,
                  expand=False):
+
+        if not check_if_root():
+            raise Exception("You need to run this application as root")
+
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
         self.notify_status = status_callback
@@ -183,6 +187,8 @@ class ImageRestorer:
         partition = disk.get_last_partition()
         if partition is not None:
             if partition.type == PARTITION_NORMAL:
+                log.info("Expanding {0} filesystem".\
+                         format(partition.get_path()))
                 self.notify_status("expand", {"device":
                                    partition.get_path()})
                 partition.filesystem.resize()
@@ -194,4 +200,5 @@ class ImageRestorer:
             self.buffer_manager.stop()
         self.active = False
         self.timer.stop()
+        log.info("Restore image stopped")
 

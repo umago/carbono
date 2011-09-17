@@ -17,5 +17,6 @@
 
 FILE_PATTERN = "{name}-{partition}-{volume}.data"
 BLOCK_SIZE = 1048576 # 1MB
+BASE_SYSTEM_SIZE = 0 #TODO
 LOG_FILE = "/var/tmp/carbono.log"
 EOF = -1

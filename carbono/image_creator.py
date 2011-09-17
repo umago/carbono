@@ -38,6 +38,9 @@ class ImageCreator:
                  raw=False, split_size=0, create_iso=False,
                  fill_with_zeros=False):
 
+        if not check_if_root():
+            raise Exception("You need to run this application as root")
+
         self.image_name = image_name
         self.device_path = source_device
         self.target_path = adjust_path(output_folder)
@@ -80,6 +83,7 @@ class ImageCreator:
         # check partitions filesystem
         if not self.raw:
             for part in partition_list:
+                log.info("Checking filesystem of {0}".format(part.get_path()))
                 self.notify_status("checking_filesystem",
                                    {"device": part.get_path()})
                 if not part.filesystem.check():
@@ -114,7 +118,7 @@ class ImageCreator:
         self.timer.start()
         remaining_size = self.split_size
         if self.create_iso:
-            remaining_size -= 300        # TODO: Calc the base size
+            remaining_size -= BASE_SYSTEM_SIZE
         slices = dict()                  # Used when creating iso
         iso_volume = 1                   # Used when creating iso
         for part in partition_list:
@@ -198,6 +202,7 @@ class ImageCreator:
         self.stop()
 
         if self.create_iso:
+            log.info("Starting create ISO operation")
             iso_creator = IsoCreator(self.target_path, slices,
                                      self.image_name,
                                      self.notify_status,
@@ -212,4 +217,5 @@ class ImageCreator:
             self.buffer_manager.stop()
         self.active = False
         self.timer.stop()        
+        log.info("Create image stopped")
 

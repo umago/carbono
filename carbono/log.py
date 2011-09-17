@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import errno
 
 from carbono.utils import *
 from carbono.config import *
@@ -26,11 +27,15 @@ __all__ = ["log"]
 class Logger(logging.Logger):
     def __init__(self, name="carbono", logfile=LOG_FILE):
         logging.Logger.__init__(self, name)
-        handler = logging.FileHandler(logfile)
-        formatter = logging.Formatter("%(asctime)s %(levelname)s [%(filename)s " \
-                                      "-> %(funcName)s] %(message)s", "%H:%M:%S")
-        handler.setFormatter(formatter)
-        self.addHandler(handler) 
-        self.setLevel(logging.DEBUG)
+        try:
+            handler = logging.FileHandler(logfile)
+            formatter = logging.Formatter("%(asctime)s %(levelname)s [%(filename)s " \
+                                          "-> %(funcName)s] %(message)s", "%H:%M:%S")
+            handler.setFormatter(formatter)
+            self.addHandler(handler) 
+            self.setLevel(logging.DEBUG)
+        except IOError, e:
+            if e.errno == errno.EACCES:
+                pass
 
 log = Logger()
