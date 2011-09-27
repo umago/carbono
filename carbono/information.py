@@ -56,7 +56,8 @@ class Information:
         """ """
         self._doc.update({"is_disk": is_disk})
 
-    def add_partition(self, number, uuid, type, volumes, size):
+    def add_partition(self, number, type, volumes, size,
+                      uuid=None, label=None):
         """ """
         part_dict = dict()
         part_dict.update({"number": number,
@@ -65,6 +66,8 @@ class Information:
 
         if uuid is not None:
             part_dict.update({"uuid": uuid})
+        if label is not None:
+            part_dict.update({"label": label})
         if volumes > 1:
             part_dict.update({"volumes": volumes})
 

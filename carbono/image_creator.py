@@ -56,6 +56,7 @@ class ImageCreator:
         self.processed_blocks = 0
         self.current_percent = -1
         self.active = False
+        self.canceled = False
 
     def notify_percent(self):
         percent = (self.processed_blocks/float(self.total_blocks)) * 100
@@ -127,6 +128,7 @@ class ImageCreator:
             log.info("Creating image of {0}".format(part.get_path()))
             number = part.get_number()
             uuid = part.filesystem.uuid()
+            label = part.filesystem.read_label()
             type = part.filesystem.type
 
             part.filesystem.open_to_read()
@@ -153,7 +155,13 @@ class ImageCreator:
 
                 next_partition = False
                 while self.active:
-                    data = buffer.get()
+                    try:
+                        data = buffer.get()
+                    except IOError, e:
+                        if e.errno == errno.EINTR:
+                            self.cancel()
+                            break
+
                     if data == EOF:
                         next_partition = True
                         if self.create_iso:
@@ -162,6 +170,7 @@ class ImageCreator:
                                 slices[iso_volume] = list()
                             slices[iso_volume].append(file_path)
                         break
+
                     fd.write(data)
                     self.processed_blocks += 1
 
@@ -184,8 +193,9 @@ class ImageCreator:
 
             self.buffer_manager.join()
             part.filesystem.close()
-            information.add_partition(number, uuid, type, volumes,
-                                      part.filesystem.get_used_size())
+            information.add_partition(number, type, volumes,
+                                      part.filesystem.get_used_size(),
+                                      uuid, label)
 
         # We dont need to save the data of the swap partition
         # we just copy the informations and re-create when
@@ -196,7 +206,7 @@ class ImageCreator:
             number = swap.get_number()
             uuid = swap.filesystem.uuid()
             type = swap.filesystem.type
-            information.add_partition(number, uuid, type, 0, 0)
+            information.add_partition(number, type, 0, 0, uuid)
 
         information.save()
         self.stop()
@@ -209,13 +219,22 @@ class ImageCreator:
                                      device.is_disk())
             iso_creator.run()
 
-        self.notify_status("finish")
+        if self.canceled:
+            self.notify_status("canceled", {"operation": 
+                                            "Create image"})
+        else:
+            self.notify_status("finish")
         log.info("Creation finished")
 
     def stop(self):
         if self.active:
-            self.buffer_manager.stop()
+            if hasattr(self, "buffer_manager"):
+                self.buffer_manager.stop()
         self.active = False
-        self.timer.stop()        
+        self.timer.stop() 
         log.info("Create image stopped")
 
+    def cancel(self):
+        if not self.canceled:
+            self.canceled = True
+            self.stop()

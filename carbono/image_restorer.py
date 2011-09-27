@@ -53,6 +53,7 @@ class ImageRestorer:
         self.processed_blocks = 0
         self.current_percent = -1
         self.active = False
+        self.canceled = False
 
     def notify_percent(self):
         # Total blocks can be 0 when restoring only a swap partition
@@ -134,6 +135,9 @@ class ImageRestorer:
             else:
                 partition.filesystem.open_to_write()
 
+            if hasattr(part, "label"):
+                partition.filesystem.write_label(part.label)
+
             if partition.filesystem.is_swap():
                 continue
 
@@ -159,7 +163,13 @@ class ImageRestorer:
 
             buffer = self.buffer_manager.output_buffer
             while self.active:
-                data = buffer.get()
+                try:
+                    data = buffer.get()
+                except IOError, e:
+                    if e.errno == errno.EINTR:
+                        self.cancel()
+                        break
+
                 if data == EOF:
                     break
                 partition.filesystem.write_block(data)
@@ -175,7 +185,11 @@ class ImageRestorer:
                 self.expand_last_partition()
 
         self.stop()
-        self.notify_status("finish")
+        if self.canceled:
+            self.notify_status("canceled", {"operation": 
+                                            "Restore image"})
+        else:
+            self.notify_status("finish")
         log.info("Restoration finished")
 
     def expand_last_partition(self):
@@ -201,4 +215,9 @@ class ImageRestorer:
         self.active = False
         self.timer.stop()
         log.info("Restore image stopped")
+
+    def cancel(self):
+        if not self.canceled:
+            self.canceled = True
+            self.stop()
 

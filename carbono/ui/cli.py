@@ -19,6 +19,7 @@ import optparse
 import os
 import errno
 import sys
+import signal
 from threading import Lock
 
 from carbono.image_restorer import ImageRestorer
@@ -32,6 +33,16 @@ class Cli:
         self.parser = optparse.OptionParser(usage=self.usage())
         self.lock = Lock()
         self._set_options()
+        self._register_signals()
+        self.operation = None
+
+    def _register_signals(self):
+        signal.signal(signal.SIGINT, self.cancel_operation)
+        signal.signal(signal.SIGUSR1, self.cancel_operation)
+
+    def cancel_operation(self, signal=None, frame=None):
+        if self.operation is not None:
+            self.operation.cancel()
 
     def usage(self):
         usage = "usage: %prog [options]\n"
@@ -146,7 +157,7 @@ class Cli:
                             (dict["volume"], dict["total"]))
 
         elif action == "canceled":
-            sys.stdout.write("%s operation canceled!\n" % 
+            sys.stdout.write("\r%s operation canceled!\n" % 
                              dict["operation"])
 
         elif action == "cannot_find_files":
@@ -196,11 +207,11 @@ class Cli:
                     else:
                         raise Exception("Cannot determine split size")
 
-            ic = ImageCreator(opt.source_device, opt.output_folder,
+            self.operation = ImageCreator(opt.source_device, opt.output_folder,
                               self.status, opt.image_name,
                               opt.compressor_level, opt.raw, split_size,
                               opt.iso, opt.fill_with_zeros)
-            ic.create_image()
+            self.operation.create_image()
 
         elif opt.target_device is not None:
             if opt.image_folder is None:
@@ -220,10 +231,10 @@ class Cli:
                     plist = opt.partition_numbers.split(',')
                     partitions = map(lambda x: int(x), plist)
 
-            ir = ImageRestorer(opt.image_folder, opt.target_device,
+            self.operation = ImageRestorer(opt.image_folder, opt.target_device,
                                self.status, partitions, opt.expand)
             try:
-                ir.restore_image()
+                self.operation.restore_image()
             except OSError, e:
                 if e.errno == errno.ECHILD:
                     pass
@@ -237,14 +248,18 @@ class Cli:
             sys.stdout.write("Compressor level:\t%d\n\n" %
                              inf.get_image_compressor_level())
             sys.stdout.write("Partitions:\n")
-            sys.stdout.write("%-10s %-20s %-15s %-36s\n" %
-                            ("Number", "Type", "Size", "UUID"))
+            sys.stdout.write("%-10s %-15s %-15s %-16s %-36s\n" %
+                            ("Number", "Type", "Size", "Label", "UUID"))
             for part in inf.get_partitions():
                 uuid = ''
+                label = ''
                 if hasattr(part, "uuid"):
                     uuid = part.uuid
-                sys.stdout.write("%-10d %-20s %-15d %-36s\n" % (part.number,
-                                 part.type, part.size, uuid))
+                if hasattr(part, "label"):
+                    label = part.label
+                sys.stdout.write("%-10d %-15s %-15d %-16s %-36s\n" %
+                                (part.number, part.type, part.size,
+                                 label, uuid))
             sys.stdout.flush()
 
         else:

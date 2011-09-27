@@ -96,3 +96,19 @@ class Ntfs(Generic):
             if ret == 0:
                 return True
         return False
+
+    def read_label(self):
+        proc = subprocess.Popen([which("ntfslabel"), "--force", self.path],
+                                stdout=subprocess.PIPE)
+        output = proc.stdout.read()
+        output = output.strip()
+        if output:
+            return output
+        return None
+
+    def write_label(self, label):
+        ret = run_simple_command('{0} --force {1} "{2}"'. \
+              format(which("ntfslabel"), self.path, label))
+        if ret == 0:
+            return True
+        return False

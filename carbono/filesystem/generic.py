@@ -136,3 +136,9 @@ class Generic:
     def resize(self):
         return True
 
+    def read_label(self):
+        return None
+
+    def write_label(self, label):
+        return True
+

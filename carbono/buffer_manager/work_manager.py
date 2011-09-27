@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import time
+import Queue
 from multiprocessing import Process, Manager, Event
 from multiprocessing.managers import BaseManager
 from threading import Thread
@@ -36,7 +37,12 @@ class Worker(Process):
     def run(self):
         self.event.set()
         while self.event.is_set():
-            block_number, data = self.buffer.get()
+            try:
+                block_number, data = self.buffer.get()
+            except IOError, e:
+                if e.errno == errno.EINTR:
+                    data = EOF
+
             if data == EOF:
                 self.stop()
                 break
@@ -51,9 +57,16 @@ class Worker(Process):
                     # wait untill ReorderBuffer start
                     # processing blocks in this range
                     time.sleep(0.1)
+                except IOError, e:
+                    if e.errno == errno.EINTR:
+                        self.stop()
 
     def stop(self):
         self.event.clear()
+        try:
+            self.terminate()
+        except AttributeError:
+            pass
 
 
 class WorkManager(Thread):
@@ -98,8 +111,14 @@ class WorkManager(Thread):
             self.put(data)
 
     def put(self, data):
-        self._input_buffer.put((deepcopy(self._block_number), data))
-        self._block_number += 1
+        while self.active:
+            try:
+                self._input_buffer.put((deepcopy(self._block_number), data),
+                                       timeout=1)
+            except Queue.Full:
+                continue
+            self._block_number += 1
+            break
 
     def _finish(self):
         self.active = False
@@ -108,7 +127,10 @@ class WorkManager(Thread):
             self._input_buffer.put((EOF, EOF))
 
         for worker in self._worker_list:
-            worker.join()
+            try:
+                worker.join()
+            except AssertionError:
+                pass
 
         self.reorder_buffer.sync()
         self.output_buffer.put(EOF)
@@ -120,6 +142,7 @@ class WorkManager(Thread):
             worker.stop()
 
         for worker in self._worker_list:
-            worker.join()
-
-        self.output_buffer.put(EOF)
+            try:
+                worker.join()
+            except AssertionError:
+                pass

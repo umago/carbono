@@ -15,11 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
+import errno
+
 from carbono.filesystem.generic import Generic
 from carbono.filesystem.ext import Ext
 from carbono.filesystem.ntfs import Ntfs
 from carbono.filesystem.btrfs import Btrfs
 from carbono.filesystem.linux_swap import LinuxSwap
+from carbono.exception import *
 
 class FilesystemFactory:
     
@@ -67,7 +70,12 @@ class FilesystemFactory:
         return self._fs.read_block()
 
     def write_block(self, data):
-        self._fs.write_block(data)
+        try:
+            self._fs.write_block(data)
+        except IOError, e:
+            if e.errno == errno.EPIPE:
+                raise ErrorWritingToDevice("Error writing to {0}". \
+                                           format(self.path))
 
     def close(self):
         self._fs.close()
@@ -95,3 +103,9 @@ class FilesystemFactory:
 
     def stop(self):
         self._fs.stop()
+
+    def read_label(self):
+        return self._fs.read_label()
+
+    def write_label(self, label):
+        return self._fs.write_label(label)
