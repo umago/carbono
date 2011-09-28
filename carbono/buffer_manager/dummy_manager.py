@@ -40,7 +40,12 @@ class DummyManager(Thread):
     def run(self):
         self.active = True
         while self.active:
-            data = self.read_block()
+            try:
+                data = self.read_block()
+            except ErrorReadingFromDevice, e:
+                self.stop()
+                raise e
+
             if not data:
                 self.stop()
                 break

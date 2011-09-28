@@ -39,8 +39,7 @@ class ImageRestorer:
                  status_callback, partitions=None,
                  expand=False):
 
-        if not check_if_root():
-            raise Exception("You need to run this application as root")
+        assert check_if_root(), "You need to run this application as root"
 
         self.image_path = adjust_path(image_folder)
         self.target_device = target_device
@@ -172,7 +171,14 @@ class ImageRestorer:
 
                 if data == EOF:
                     break
-                partition.filesystem.write_block(data)
+
+                try:
+                    partition.filesystem.write_block(data)
+                except ErrorWritingToDevice, e:
+                    if not self.canceled:
+                        self.stop()
+                        raise e
+
                 self.processed_blocks += 1
 
             self.buffer_manager.join()
@@ -184,12 +190,11 @@ class ImageRestorer:
             if information.get_image_is_disk():
                 self.expand_last_partition()
 
-        self.stop()
         if self.canceled:
             self.notify_status("canceled", {"operation": 
                                             "Restore image"})
         else:
-            self.notify_status("finish")
+            self._finish()
         log.info("Restoration finished")
 
     def expand_last_partition(self):
@@ -215,6 +220,10 @@ class ImageRestorer:
         self.active = False
         self.timer.stop()
         log.info("Restore image stopped")
+
+    def _finish(self):
+        self.stop()
+        self.notify_status("finish")
 
     def cancel(self):
         if not self.canceled:

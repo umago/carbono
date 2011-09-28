@@ -52,23 +52,23 @@ class Ext(Generic):
 
     def open_to_read(self):
         """ """
-        cmd = "{0} -c -s {1} -o -".format(which("partclone.extfs"), self.path)
+        cmd = "{0} -q -c -s {1} -o -".format(which("partclone.extfs"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
             self._fd = self.process.stdout
         except:
-            raise ErrorOpenToRead("Cannot open %s to read" % self.path)
+            raise ErrorOpenToRead("Cannot open {0} to read".format(self.path))
 
     def open_to_write(self, uuid=None):
         """ """
-        cmd = "{0} -r -o {1} -s - ".format(which("partclone.extfs"), self.path)
+        cmd = "{0} -q -r -o {1} -s - ".format(which("partclone.extfs"), self.path)
         try:
             self.process = RunCmd(cmd)
             self.process.run()
             self._fd = self.process.stdin
         except:
-            raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
+            raise ErrorOpenToWrite("Cannot open {0} to write".format(self.path))
 
     def uuid(self):
         """ """

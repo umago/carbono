@@ -25,6 +25,7 @@ from copy import deepcopy
 from carbono.buffer_manager.reorder_buffer import ReoderBuffer
 from carbono.utils import *
 from carbono.config import *
+from carbono.exception import *
 
 class Worker(Process):
     def __init__(self, buffer, reorder_buffer, job):
@@ -104,7 +105,12 @@ class WorkManager(Thread):
             self._worker_list.append(worker)
 
         while self.active:
-            data = self.read_block()
+            try:
+                data = self.read_block()
+            except ErrorReadingFromDevice, e:
+                self.stop()
+                raise e
+                
             if not data:
                 self._finish()
                 break

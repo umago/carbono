@@ -67,15 +67,26 @@ class FilesystemFactory:
         return self._fs.get_used_size()
 
     def read_block(self):
-        return self._fs.read_block()
+        try:
+            return self._fs.read_block()
+        except IOError, e:
+            if e.errno == errno.EPIPE:
+                msg = "The application crashed when " +\
+                       "reading from {0}".format(self.path)
+
+            msg = self._append_debug(msg, e)
+            raise ErrorReadingFromDevice(msg)
 
     def write_block(self, data):
         try:
             self._fs.write_block(data)
         except IOError, e:
             if e.errno == errno.EPIPE:
-                raise ErrorWritingToDevice("Error writing to {0}". \
-                                           format(self.path))
+                msg = "The application crashed when " +\
+                       "writing in {0}".format(self.path)
+
+            msg = self._append_debug(msg, e)
+            raise ErrorWritingToDevice(msg)
 
     def close(self):
         self._fs.close()
@@ -109,3 +120,10 @@ class FilesystemFactory:
 
     def write_label(self, label):
         return self._fs.write_label(label)
+
+    def _append_debug(self, msg, e):
+        msg += "\n\n[DEBUG]"
+        msg += "\nFilesystem type: {0}".format(self.type)
+        msg += "\nDevice: {0}".format(self.path)
+        msg += "\nOriginal error: {0}".format(e)
+        return msg

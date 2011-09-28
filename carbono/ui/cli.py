@@ -119,7 +119,7 @@ class Cli:
                                 dest="expand", 
                                 action="store_true",
                                 default=False,
-                                help="If possible resize the (last) partition "
+                                help="If possible resize the last partition "
                                 "until it fills the whole disk. "
                                 "ONLY FOR DISK RECOVERIES.",)
         information_group.add_option("-q", "--image-information", 

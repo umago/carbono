@@ -1,8 +1,6 @@
-* GUI
+* GUI (Check if partitions is mounted and disable the treeview row)
 * Multicast server
 * Hook scripts (post-restore)
 * Improve log system to log to network instead of file
 * Base System
 * Export partitions to VHD, VDI, etc...
-* Se um filesystem não está limpo e mesmo assim a pessoa quer fazer a imagem, fazer em modo generico
-* Checar as particoes que ja estao montadas e colocar uma chavinha do lado (gparted olhar)

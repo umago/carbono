@@ -16,6 +16,7 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 import math
+import os
 
 from carbono.device import Device
 from carbono.disk import Disk
@@ -38,8 +39,9 @@ class ImageCreator:
                  raw=False, split_size=0, create_iso=False,
                  fill_with_zeros=False):
 
-        if not check_if_root():
-            raise Exception("You need to run this application as root")
+        assert check_if_root(), "You need to run this application as root"
+        assert os.path.isdir(output_folder), "{0} folder is invalid".\
+                                             format(output_folder)
 
         self.image_name = image_name
         self.device_path = source_device
@@ -139,8 +141,8 @@ class ImageCreator:
                 compact_callback = compressor.compact
 
             self.buffer_manager = BufferManagerFactory(
-                                                  part.filesystem.read_block,
-                                                  compact_callback)
+                                  part.filesystem.read_block,
+                                  compact_callback)
             self.buffer_manager.start()
 
             buffer = self.buffer_manager.output_buffer 
@@ -236,5 +238,6 @@ class ImageCreator:
 
     def cancel(self):
         if not self.canceled:
+            log.info("Create image canceled")
             self.canceled = True
             self.stop()

@@ -32,7 +32,7 @@ class Ntfs(Generic):
             self.process.run()
             self._fd = self.process.stdout
         except:
-            raise ErrorOpenToRead("Cannot open %s to read" % self.path)
+            raise ErrorOpenToRead("Cannot open {0} to read".format(self.path))
 
     def open_to_write(self):
         """ """
@@ -43,7 +43,7 @@ class Ntfs(Generic):
             self.process.run()
             self._fd = self.process.stdin
         except:
-            raise ErrorOpenToWrite("Cannot open %s to write" % self.path)
+            raise ErrorOpenToWrite("Cannot open {0} to write".format(self.path))
 
     def get_size(self):
         """ """

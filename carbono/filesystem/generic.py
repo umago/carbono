@@ -46,7 +46,8 @@ class Generic:
             self.process.run()
             self._fd = self.process.stdout
         except:
-            raise ErrorOpenToRead("Cannot open %s to read" % self.path)
+            raise ErrorOpenToRead("Cannot open {0} to read".\
+                                  format(self.path))
 
     def open_to_write(self):
         """ """
@@ -56,13 +57,15 @@ class Generic:
             self.process.run()
             self._fd = self.process.stdin
         except:
-            raise ErrorOpenToWrite("Cannot open %s to read" % self.path)
+            raise ErrorOpenToWrite("Cannot open {0} to write".\
+                                   format(self.path))
 
     def read_block(self):
         """ """
         if self._fd is None or \
            self._fd.closed:
-            raise ErrorReadingFromDevice 
+            raise ErrorReadingFromDevice("File descriptor does not " +\
+                                         "exist or its closed")
             
         return self._fd.read(BLOCK_SIZE)
 
@@ -70,7 +73,8 @@ class Generic:
         """  """
         if self._fd is None or \
            self._fd.closed:
-            raise ErrorWritingToDevice
+            raise ErrorWritingToDevice("File descriptor does not "+\
+                                       "exist or its closed")
 
         self._fd.write(data)
 
