@@ -1,51 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="lower">1</property>
-    <property name="upper">9</property>
-    <property name="value">6</property>
-    <property name="step_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment2">
-    <property name="upper">1e+19</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkAboutDialog" id="dialog_about">
-    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window_main</property>
     <property name="program_name">Glade</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox2">
+      <object class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
+        <child>
+          <placeholder/>
+        </child>
         <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area2">
+          <object class="GtkHButtonBox" id="dialog-action_area2">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="layout_style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
   </object>
   <object class="GtkDialog" id="dialog_create_advanced">
-    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Advanced</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
@@ -53,52 +37,20 @@
     <property name="transient_for">window_main</property>
     <property name="mnemonics_visible">False</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox1">
+      <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button4">
-                <property name="label" translatable="yes">OK</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkEventBox" id="eventbox_create_advanced">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkAlignment" id="alignment1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">40</property>
                 <property name="bottom_padding">10</property>
                 <property name="left_padding">20</property>
                 <child>
                   <object class="GtkLabel" id="label_menu1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="yalign">1</property>
                     <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Advanced options&lt;/span&gt;</property>
@@ -122,18 +74,15 @@
             <child>
               <object class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="border_width">10</property>
                 <property name="spacing">10</property>
                 <child>
                   <object class="GtkAlignment" id="alignment7">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">10</property>
                     <child>
                       <object class="GtkLabel" id="label18">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">&lt;b&gt;Compression&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
@@ -149,25 +98,21 @@
                 <child>
                   <object class="GtkAlignment" id="alignment10">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkVBox" id="vbox3">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="spacing">5</property>
                         <child>
                           <object class="GtkRadioButton" id="radiobutton_compress">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <child>
                               <object class="GtkLabel" id="label19">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Compress the image&lt;/span&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
@@ -175,36 +120,31 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment11">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">1 is fastest and produces the least compression, 9 is slowest and produces the most</property>
                             <property name="left_padding">22</property>
                             <child>
                               <object class="GtkHBox" id="hbox8">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="spacing">10</property>
                                 <child>
                                   <object class="GtkLabel" id="label20">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Compression level (1 to 9):&lt;/span&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="spinbutton1">
+                                  <object class="GtkSpinButton" id="spinbutton_compression_level">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="editable">False</property>
@@ -212,11 +152,9 @@
                                     <property name="invisible_char">●</property>
                                     <property name="truncate_multiline">True</property>
                                     <property name="caps_lock_warning">False</property>
-                                    <property name="adjustment">adjustment1</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -225,7 +163,6 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -234,13 +171,11 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">radiobutton_compress</property>
                             <child>
                               <object class="GtkLabel" id="label21">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Don't compress the image&lt;/span&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
@@ -248,7 +183,6 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -257,19 +191,16 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkAlignment" id="alignment6">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">10</property>
                     <child>
                       <object class="GtkLabel" id="label17">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">&lt;b&gt;Raw image&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
@@ -285,12 +216,10 @@
                 <child>
                   <object class="GtkAlignment" id="alignment12">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkVBox" id="vbox10">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="spacing">5</property>
                         <child>
                           <object class="GtkCheckButton" id="checkbutton1">
@@ -298,27 +227,22 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="tooltip_text" translatable="yes">Copies every block of the filesystem</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <child>
                               <object class="GtkLabel" id="label22">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Force Raw image&lt;/span&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment13">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="left_padding">22</property>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton2">
@@ -326,12 +250,10 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Because Raw image copies every block of the filesystem this will aid compression of the image (If compression is enabled)</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <child>
                                   <object class="GtkLabel" id="label23">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Fill the filesystem with zeros&lt;/span&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
@@ -341,7 +263,6 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -350,7 +271,6 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
@@ -359,7 +279,6 @@
             <child type="tab">
               <object class="GtkLabel" id="label4">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Optimization&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </object>
@@ -370,137 +289,129 @@
             <child>
               <object class="GtkVBox" id="vbox13">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="border_width">10</property>
                 <property name="spacing">10</property>
                 <child>
-                  <object class="GtkAlignment" id="alignment25">
+                  <object class="GtkVBox" id="vbox15">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="top_padding">10</property>
+                    <property name="spacing">5</property>
                     <child>
-                      <object class="GtkAlignment" id="alignment29">
+                      <object class="GtkAlignment" id="alignment232">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">10</property>
+                        <property name="top_padding">10</property>
                         <child>
-                          <object class="GtkVBox" id="vbox15">
+                          <object class="GtkLabel" id="label_split">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="spacing">5</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Split image&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment321">
+                        <property name="visible">True</property>
+                        <property name="left_padding">20</property>
+                        <child>
+                          <object class="GtkCheckButton" id="checkbutton3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="draw_indicator">True</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton3">
+                              <object class="GtkLabel" id="label35">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="has_tooltip">True</property>
-                                <property name="tooltip_markup" translatable="yes">Copies every block of the filesystem</property>
-                                <property name="tooltip_text" translatable="yes">Copies every block of the filesystem</property>
-                                <property name="use_action_appearance">False</property>
-                                <property name="xalign">0</property>
-                                <property name="draw_indicator">True</property>
-                                <child>
-                                  <object class="GtkLabel" id="label35">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Split image&lt;/span&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                </child>
+                                <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Active&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment4ew">
+                        <property name="visible">True</property>
+                        <property name="left_padding">40</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox14">
+                            <property name="visible">True</property>
+                            <property name="spacing">10</property>
+                            <child>
+                              <object class="GtkLabel" id="label30">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Size:&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
+                                <property name="expand">False</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkAlignment" id="alignment26">
+                              <object class="GtkSpinButton" id="spinbutton_split_size">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="has_tooltip">True</property>
-                                <property name="left_padding">22</property>
-                                <child>
-                                  <object class="GtkHBox" id="hbox14">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">10</property>
-                                    <child>
-                                      <object class="GtkLabel" id="label30">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Slices size (in MB):&lt;/span&gt;</property>
-                                        <property name="use_markup">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="spinbutton2">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="editable">False</property>
-                                        <property name="max_length">1</property>
-                                        <property name="invisible_char">●</property>
-                                        <property name="truncate_multiline">True</property>
-                                        <property name="invisible_char_set">True</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="adjustment">adjustment2</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">•</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkAlignment" id="alignment30">
+                              <object class="GtkComboBox" id="combobox_split_size">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="left_padding">22</property>
-                                <child>
-                                  <object class="GtkCheckButton" id="checkbutton4">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="has_tooltip">True</property>
-                                    <property name="tooltip_markup" translatable="yes">Because Raw image copies every block of the filesystem this will aid compression of the image (If compression is enabled)</property>
-                                    <property name="tooltip_text" translatable="yes">Because Raw image copies every block of the filesystem this will aid compression of the image (If compression is enabled)</property>
-                                    <property name="use_action_appearance">False</property>
-                                    <property name="xalign">0</property>
-                                    <property name="draw_indicator">True</property>
-                                    <child>
-                                      <object class="GtkLabel" id="label36">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Create ISO&lt;/span&gt;</property>
-                                        <property name="use_markup">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
                           </object>
                         </child>
                       </object>
+                      <packing>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment30">
+                        <property name="visible">True</property>
+                        <property name="left_padding">40</property>
+                        <child>
+                          <object class="GtkCheckButton" id="checkbutton4">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="draw_indicator">True</property>
+                            <child>
+                              <object class="GtkLabel" id="label36">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Create ISO&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">3</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -517,7 +428,6 @@
             <child type="tab">
               <object class="GtkLabel" id="label29">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Split&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </object>
@@ -535,47 +445,39 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">2</property>
           </packing>
         </child>
         <child>
           <object class="GtkAlignment" id="alignment14">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="top_padding">20</property>
             <property name="left_padding">5</property>
             <property name="right_padding">5</property>
             <child>
               <object class="GtkHBox" id="hbox7">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="spacing">10</property>
                 <child>
                   <object class="GtkImage" id="image4">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="stock">gtk-info</property>
                     <property name="icon-size">6</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="label24">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;If you leave the mouse cursor for some seconds over
 some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -584,8 +486,31 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">3</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button4">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -597,60 +522,27 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
   <object class="GtkDialog" id="dialog_harddisk">
     <property name="width_request">350</property>
     <property name="height_request">350</property>
-    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Hard disk</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window_main</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox3">
+      <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area3">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button9">
-                <property name="label" translatable="yes">OK</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkEventBox" id="eventbox_harddisk">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkAlignment" id="alignment15">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">40</property>
                 <property name="bottom_padding">10</property>
                 <property name="left_padding">20</property>
                 <child>
                   <object class="GtkLabel" id="label_menu3">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="yalign">1</property>
                     <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Hard disk&lt;/span&gt;</property>
@@ -669,7 +561,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
         <child>
           <object class="GtkAlignment" id="alignment16">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="top_padding">10</property>
             <property name="bottom_padding">5</property>
             <property name="left_padding">5</property>
@@ -677,16 +568,13 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkVBox" id="vbox11">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="spacing">5</property>
                 <child>
                   <object class="GtkComboBox" id="combobox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -699,15 +587,10 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                       <object class="GtkTreeView" id="treeview1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection" id="treeview-selection1"/>
-                        </child>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -716,8 +599,31 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button9">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -729,59 +635,26 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
   <object class="GtkDialog" id="dialog_network">
     <property name="width_request">350</property>
     <property name="height_request">350</property>
-    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Network</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window_main</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox4">
+      <object class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area4">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button11">
-                <property name="label" translatable="yes">OK</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkEventBox" id="eventbox_network">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkAlignment" id="alignment20">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">40</property>
                 <property name="bottom_padding">10</property>
                 <property name="left_padding">20</property>
                 <child>
                   <object class="GtkLabel" id="label_menu4">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="yalign">1</property>
                     <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Network&lt;/span&gt;</property>
@@ -800,7 +673,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
         <child>
           <object class="GtkAlignment" id="alignment21">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="top_padding">10</property>
             <property name="bottom_padding">5</property>
             <property name="left_padding">5</property>
@@ -808,23 +680,19 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkVBox" id="vbox12">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="spacing">5</property>
                 <child>
                   <object class="GtkHBox" id="hbox12">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="spacing">5</property>
                     <child>
                       <object class="GtkLabel" id="label27">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;IP&lt;/span&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -837,8 +705,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="caps_lock_warning">False</property>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -847,11 +713,9 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <child>
                           <object class="GtkLabel" id="label28">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Scan&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
@@ -859,14 +723,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -879,15 +741,10 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                       <object class="GtkTreeView" id="treeview2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection" id="treeview-selection2"/>
-                        </child>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -896,8 +753,31 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area4">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button11">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -909,66 +789,20 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
   <object class="GtkDialog" id="dialog_select_file">
     <property name="width_request">400</property>
     <property name="height_request">400</property>
-    <property name="can_focus">False</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox5">
+      <object class="GtkVBox" id="dialog-vbox5">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area5">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button13">
-                <property name="label" translatable="yes">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button5">
-                <property name="label" translatable="yes">OK</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkVBox" id="vbox_select_file">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkEventBox" id="eventbox_select_file">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment22">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">40</property>
                     <property name="bottom_padding">10</property>
                     <property name="left_padding">20</property>
@@ -976,7 +810,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <child>
                       <object class="GtkLabel" id="label_progress2">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="yalign">1</property>
                         <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Select File&lt;/span&gt;</property>
@@ -995,7 +828,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkAlignment" id="alignment24">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">20</property>
                 <property name="bottom_padding">5</property>
                 <property name="left_padding">5</property>
@@ -1003,31 +835,26 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 <child>
                   <object class="GtkHBox" id="hbox13">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="spacing">10</property>
                     <child>
                       <object class="GtkImage" id="image9">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="stock">gtk-find</property>
                         <property name="icon-size">3</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="label11">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;&lt;b&gt;IP Adress&lt;/b&gt;&lt;/span&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -1038,8 +865,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="invisible_char">●</property>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -1049,11 +874,9 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
@@ -1062,14 +885,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="alignment23">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">5</property>
                 <property name="bottom_padding">5</property>
                 <property name="left_padding">5</property>
@@ -1110,16 +931,50 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area5">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button13">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button5">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -1132,7 +987,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
   <object class="GtkWindow" id="window_main">
     <property name="width_request">600</property>
     <property name="height_request">500</property>
-    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Carbono</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
@@ -1146,22 +1000,18 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
         <child>
           <object class="GtkVBox" id="vbox_menu">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkEventBox" id="eventbox_menu">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">40</property>
                     <property name="bottom_padding">10</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkLabel" id="label_menu">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="yalign">1</property>
                         <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Menu of options&lt;/span&gt;</property>
@@ -1180,7 +1030,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkAlignment" id="alignment3">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">20</property>
                 <property name="bottom_padding">20</property>
                 <property name="left_padding">20</property>
@@ -1188,7 +1037,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 <child>
                   <object class="GtkTable" id="table1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="n_rows">2</property>
                     <property name="n_columns">2</property>
                     <property name="column_spacing">10</property>
@@ -1199,35 +1047,29 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="relief">none</property>
                         <child>
                           <object class="GtkHBox" id="hbox5">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="border_width">20</property>
                             <property name="spacing">10</property>
                             <child>
                               <object class="GtkImage" id="image1">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="stock">gtk-harddisk</property>
                                 <property name="icon-size">6</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkVBox" id="vbox9">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel" id="label8">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="ypad">3</property>
                                     <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;_Restore Image&lt;/b&gt;&lt;/big&gt;</property>
@@ -1235,29 +1077,22 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label9">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="label" translatable="yes">&lt;i&gt;Restore your image&lt;/i&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -1275,35 +1110,29 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="relief">none</property>
                         <child>
                           <object class="GtkHBox" id="hbox3">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="border_width">20</property>
                             <property name="spacing">10</property>
                             <child>
                               <object class="GtkImage" id="image7">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="stock">gtk-connect</property>
                                 <property name="icon-size">6</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkVBox" id="vbox6">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel" id="label7">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="ypad">3</property>
                                     <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;_Multicast Server&lt;/b&gt;&lt;/big&gt;</property>
@@ -1311,29 +1140,22 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label10">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="label" translatable="yes">blah blah blah</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -1351,35 +1173,29 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="relief">none</property>
                         <child>
                           <object class="GtkHBox" id="hbox4">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="border_width">20</property>
                             <property name="spacing">10</property>
                             <child>
                               <object class="GtkImage" id="image8">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="stock">gtk-network</property>
                                 <property name="icon-size">6</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkVBox" id="vbox7">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel" id="label13">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="ypad">3</property>
                                     <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;M_ulticast Client&lt;/b&gt;&lt;/big&gt;</property>
@@ -1387,29 +1203,22 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label14">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="label" translatable="yes">bleh bleh bleh</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -1429,36 +1238,30 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="relief">none</property>
-                        <signal name="clicked" handler="create_image" swapped="no"/>
+                        <signal name="clicked" handler="create_image"/>
                         <child>
                           <object class="GtkHBox" id="hbox2">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="border_width">20</property>
                             <property name="spacing">10</property>
                             <child>
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="stock">gtk-new</property>
                                 <property name="icon-size">6</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkVBox" id="vbox2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel" id="label5">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="ypad">3</property>
                                     <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;_Create Image&lt;/b&gt;&lt;/big&gt;</property>
@@ -1466,29 +1269,22 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label6">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="xalign">0.05000000074505806</property>
                                     <property name="label" translatable="yes">&lt;i&gt;Create your image&lt;/i&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -1503,15 +1299,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkHButtonBox" id="hbuttonbox2">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="border_width">20</property>
                 <property name="layout_style">start</property>
                 <child>
@@ -1519,35 +1312,27 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="about" swapped="no"/>
+                    <signal name="clicked" handler="about"/>
                     <child>
                       <object class="GtkHBox" id="hbox6">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkImage" id="image3">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="stock">gtk-about</property>
                             <property name="icon-size">3</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label2">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Credits</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1563,7 +1348,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -1575,15 +1359,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
         <child>
           <object class="GtkVBox" id="vbox_progress">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkEventBox" id="eventbox_progress">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment2">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">40</property>
                     <property name="bottom_padding">10</property>
                     <property name="left_padding">20</property>
@@ -1591,34 +1372,27 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <child>
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label_progress">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="xalign">0</property>
                             <property name="yalign">1</property>
                             <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Processing&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label_progress1">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="xalign">1</property>
                             <property name="yalign">1</property>
                             <property name="label" translatable="yes">&lt;span foreground="white" size="large"&gt;Creating Image&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1639,11 +1413,9 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkEventBox" id="eventbox_progressbar">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment4">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">10</property>
                     <property name="bottom_padding">10</property>
                     <property name="left_padding">20</property>
@@ -1651,30 +1423,23 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <child>
                       <object class="GtkVBox" id="vbox4">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="spacing">1</property>
                         <child>
                           <object class="GtkLabel" id="label1">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="xalign">0</property>
                             <property name="label" translatable="yes">&lt;span foreground="white"&gt;&lt;i&gt;status&lt;/i&gt;&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkProgressBar" id="progressbar1">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1700,22 +1465,18 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
         <child>
           <object class="GtkVBox" id="vbox_create_image">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkEventBox" id="eventbox_create_image">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkAlignment" id="alignment8">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="top_padding">40</property>
                     <property name="bottom_padding">10</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkLabel" id="label_menu2">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="yalign">1</property>
                         <property name="label" translatable="yes">&lt;span foreground="white" size="xx-large"&gt;Create image&lt;/span&gt;</property>
@@ -1734,7 +1495,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
             <child>
               <object class="GtkAlignment" id="alignment9">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">20</property>
                 <property name="bottom_padding">5</property>
                 <property name="left_padding">20</property>
@@ -1742,17 +1502,14 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 <child>
                   <object class="GtkVBox" id="vbox5">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="spacing">10</property>
                     <child>
                       <object class="GtkHBox" id="hbox9">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="spacing">5</property>
                         <child>
                           <object class="GtkLabel" id="label12">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Image name:&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
@@ -1769,15 +1526,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                             <property name="invisible_char">●</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -1791,8 +1545,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
                         <property name="padding">5</property>
                         <property name="position">1</property>
                       </packing>
@@ -1800,24 +1552,19 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                     <child>
                       <object class="GtkAlignment" id="alignment17">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="right_padding">350</property>
                         <child>
                           <object class="GtkVBox" id="vbox8">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;&lt;b&gt;Save to&lt;/b&gt;&lt;/span&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
@@ -1826,13 +1573,11 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <child>
                                   <object class="GtkLabel" id="label15">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Hard disk&lt;/span&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
@@ -1840,61 +1585,50 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment18">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="left_padding">20</property>
                                 <child>
                                   <object class="GtkButton" id="button3">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
-                                    <signal name="clicked" handler="create_harddisk" swapped="no"/>
+                                    <signal name="clicked" handler="create_harddisk"/>
                                     <child>
                                       <object class="GtkHBox" id="hbox10">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
                                         <property name="spacing">5</property>
                                         <child>
                                           <object class="GtkLabel" id="label25">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                             <property name="xalign">0</property>
                                             <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;(None)&lt;/span&gt;</property>
                                             <property name="use_markup">True</property>
                                           </object>
                                           <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">True</property>
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkVSeparator" id="vseparator1">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkImage" id="image5">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                             <property name="stock">gtk-harddisk</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
                                             <property name="position">2</property>
                                           </packing>
                                         </child>
@@ -1904,8 +1638,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -1914,13 +1646,11 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">radiobutton_new_harddisk</property>
                                 <child>
                                   <object class="GtkLabel" id="label16">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;Network&lt;/span&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
@@ -1928,61 +1658,50 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
                                 <property name="position">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment19">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="left_padding">20</property>
                                 <child>
                                   <object class="GtkButton" id="button2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
-                                    <signal name="clicked" handler="create_network" swapped="no"/>
+                                    <signal name="clicked" handler="create_network"/>
                                     <child>
                                       <object class="GtkHBox" id="hbox11">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
                                         <property name="spacing">5</property>
                                         <child>
                                           <object class="GtkLabel" id="label26">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                             <property name="xalign">0</property>
                                             <property name="label" translatable="yes">&lt;span foreground="#3c3b37"&gt;(None)&lt;/span&gt;</property>
                                             <property name="use_markup">True</property>
                                           </object>
                                           <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">True</property>
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkVSeparator" id="vseparator2">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkImage" id="image6">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
                                             <property name="stock">gtk-network</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
                                             <property name="position">2</property>
                                           </packing>
                                         </child>
@@ -1992,8 +1711,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
                                 <property name="position">4</property>
                               </packing>
                             </child>
@@ -2002,7 +1719,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -2010,15 +1726,12 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="alignment5">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="top_padding">5</property>
                 <property name="bottom_padding">5</property>
                 <property name="left_padding">5</property>
@@ -2026,7 +1739,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                 <child>
                   <object class="GtkHButtonBox" id="hbuttonbox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="border_width">5</property>
                     <property name="spacing">5</property>
                     <property name="layout_style">end</property>
@@ -2036,8 +1748,7 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="create_advanced" swapped="no"/>
+                        <signal name="clicked" handler="create_advanced"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -2052,8 +1763,7 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="menu" swapped="no"/>
+                        <signal name="clicked" handler="menu"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -2067,7 +1777,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -2080,7 +1789,6 @@ some options a tooltip will appear with informations.&lt;/span&gt;</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>

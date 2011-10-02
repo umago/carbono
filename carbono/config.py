@@ -17,6 +17,16 @@
 
 FILE_PATTERN = "{name}-{partition}-{volume}.data"
 BLOCK_SIZE = 1048576 # 1MB
-BASE_SYSTEM_SIZE = 0 #TODO
+BASE_SYSTEM_SIZE = 0 #TODO (in bytes)
 LOG_FILE = "/var/tmp/carbono.log"
 EOF = -1
+VERSION = (0, 1, 0, "alpha", 0)
+
+def get_version():
+    version = "%s.%s" % (VERSION[0], VERSION[1])
+    if VERSION[2]:
+        version = "%s.%s" % (version, VERSION[2])
+    if VERSION[3] != "final":
+            version = "%s-%s-%s" % (version, VERSION[3], VERSION[4])
+    return version
+

@@ -82,6 +82,9 @@ class ImageCreator:
             dlm.save_to_file(disk)
         
         partition_list = disk.get_valid_partitions(self.raw)
+        if not partition_list:
+            raise ErrorCreatingImage("Partition(s) hasn't a " +\
+                                     "valid filesystem")
 
         # check partitions filesystem
         if not self.raw:

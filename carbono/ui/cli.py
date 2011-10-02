@@ -26,11 +26,13 @@ from carbono.image_restorer import ImageRestorer
 from carbono.image_creator import ImageCreator
 from carbono.information import Information
 from carbono.utils import *
+from carbono.config import *
 
 class Cli:
 
     def __init__(self):
-        self.parser = optparse.OptionParser(usage=self.usage())
+        self.parser = optparse.OptionParser(usage=self.usage(),
+                                            version=get_version())
         self.lock = Lock()
         self._set_options()
         self._register_signals()
