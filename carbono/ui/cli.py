@@ -162,7 +162,7 @@ class Cli:
             sys.stdout.write("\r%s operation canceled!\n" % 
                              dict["operation"])
 
-        elif action == "cannot_find_files":
+        elif action == "base_files_not_found":
             sys.stdout.write("\nCarbono files cannt be found in %s.\n" \
                              % dict["device"])
             response = raw_input("Please type another device " + \

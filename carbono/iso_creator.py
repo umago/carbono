@@ -107,7 +107,7 @@ class IsoCreator:
                             error = True
 
                     if error:
-                        device = self.notify_callback("cannot_find_files",
+                        device = self.notify_callback("base_files_not_found",
                                                      {"device": device})
                         if not device:
                             self.notify_callback("canceled",
@@ -131,8 +131,7 @@ class IsoCreator:
                     # restore the image
                     map(lambda x: self.slices[volume].\
                         append(self.target_path + x),
-                        ("mbr.bin", "disk.dl",
-                         "{0}.info".format(self.name)))
+                        ("mbr.bin", "disk.dl","image.info"))
                         
             if first_volume:
                 extra_params = "-joliet-long -b " + \
