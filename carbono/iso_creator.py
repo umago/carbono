@@ -22,7 +22,7 @@ from carbono.utils import *
 from carbono.exception import *
 from carbono.config import *
 
-CARBONO_FILES = ("initram.gz", "vmlinuz")
+CARBONO_FILES = ("initram.gz", "vmlinuz", "isolinux.cfg")
 
 class IsoCreator:
     def __init__(self, target_path, slices,
@@ -71,15 +71,6 @@ class IsoCreator:
             ret = False
         return ret
 
-    def make_cfg(self):
-        path = "/tmp/isolinux.cfg"
-        template = "prompt 0\n\tdefault 1\nlabel 1\n\tkernel " + \
-                   "vmlinuz\n\tappend initrd=initram.gz " + \
-                   "rdinit=/sbin/init ramdisk_size=512000"
-        with open(path, 'w') as f:
-            f.write(template)
-        return path
-
     def run(self):
         volumes = self.slices.keys()
         volumes.sort()
@@ -124,7 +115,6 @@ class IsoCreator:
 
                 # Bootloader
                 self.slices[volume].append("/usr/lib/syslinux/isolinux.bin")
-                self.slices[volume].append(self.make_cfg())
 
                 if self.is_disk:
                     # Add the rest of files needed to
