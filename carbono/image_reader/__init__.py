@@ -31,3 +31,6 @@ class ImageReaderFactory:
 
     def read_block(self):
         return self._reader.read_block()
+
+    def open(self):
+        self._reader.open()

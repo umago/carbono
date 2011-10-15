@@ -29,7 +29,6 @@ class GenericReader:
         self.current_volume = 1
         self.notify_callback = notify_status
         self._fd = None
-        self.open()
 
     def _check_fd(self):
         return self._fd is None or self._fd.closed

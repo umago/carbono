@@ -158,6 +158,11 @@ class ImageRestorer:
 
             self.buffer_manager = BufferManagerFactory(image_reader.read_block,
                                                        extract_callback)
+
+            # open the file after instantiating BufferManager, cause of a
+            # problem on multiprocessing module, FD_CLOEXE doesn't work
+            # (I don't want to dup the file descriptor).
+            image_reader.open()
             self.buffer_manager.start()
 
             buffer = self.buffer_manager.output_buffer

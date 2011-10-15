@@ -83,6 +83,7 @@ class WorkManager(Thread):
         self.active = False
 
         self._setup()
+        self._start_workers()
 
     def _setup(self):
         free_phy_mem = available_memory(percent=35)
@@ -95,8 +96,7 @@ class WorkManager(Thread):
         bm.start()
         self.reorder_buffer = bm.ReoderBuffer(self.output_buffer, 50)
 
-    def run(self):
-        self.active = True
+    def _start_workers(self):
         for cpu in xrange(self.num_cores):
             worker = Worker(self._input_buffer, 
                             self.reorder_buffer,
@@ -104,6 +104,8 @@ class WorkManager(Thread):
             worker.start()
             self._worker_list.append(worker)
 
+    def run(self):
+        self.active = True
         while self.active:
             try:
                 data = self.read_block()
