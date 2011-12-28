@@ -16,13 +16,19 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 from carbono.buffer_manager.work_manager import WorkManager
+from carbono.buffer_manager.simple_manager import SimpleManager
 from carbono.buffer_manager.dummy_manager import DummyManager
+
+from carbono.utils import *
 
 class BufferManagerFactory:
 
     def __init__(self, read_callback, job_callback=None):
         if job_callback:
-            self._manager = WorkManager(read_callback, job_callback)
+            if available_processors() <= 2 and is_hyperthreading():
+                self._manager = SimpleManager(read_callback, job_callback)
+            else:
+                self._manager = WorkManager(read_callback, job_callback)
         else:
             self._manager = DummyManager(read_callback)
 

@@ -71,7 +71,7 @@ class Worker(Process):
 
 
 class WorkManager(Thread):
-    def __init__(self, read_callback, job_callback=None):
+    def __init__(self, read_callback, job_callback):
         Thread.__init__(self)
         self.read_block = read_callback
         self.job = job_callback

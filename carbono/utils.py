@@ -116,6 +116,15 @@ def singleton(cls):
 def available_processors():
     return multiprocessing.cpu_count()
 
+def is_hyperthreading():
+    with open("/proc/cpuinfo", "r") as f:
+        for line in f.readlines():
+            if line.startswith("flags"):
+                if "ht" in line.split():
+                    return True
+                break
+    return False
+
 def available_memory(percent=100):
     free = 0
     with open("/proc/meminfo", 'r') as f:
